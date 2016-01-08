@@ -1,0 +1,4 @@
+py-trello
+google-api-python-client
+gspread
+pyyaml
