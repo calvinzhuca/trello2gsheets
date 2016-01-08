@@ -38,11 +38,16 @@ class TrelloCollector(object):
             report_src[board_t] = {};
             report_src[board_t][':board_id'] = trello_sources[board_t][':board_id']
             report_src[board_t][':lists'] = {}
+            report_src[board_t][':epics'] = {}
             #report_src[board_t][':board_name'] = 
             for list_t in trello_sources[board_t][':lists'].keys():
                 self.logger.debug("Adding board %s, list %s to the report" % (trello_sources[board_t][':board_id'], trello_sources[board_t][':lists'][list_t]))
                 report_src[board_t][':lists'][list_t] = {};
                 report_src[board_t][':lists'][list_t][':list_id'] = trello_sources[board_t][':lists'][list_t]
+            for epics_t in trello_sources[board_t][':epics'].keys():
+                self.logger.debug("Adding board %s, epic list %s to the report" % (trello_sources[board_t][':board_id'], trello_sources[board_t][':epics'][epics_t]))
+                report_src[board_t][':epics'][epics_t] = {};
+                report_src[board_t][':epics'][epics_t][':list_id'] = trello_sources[board_t][':epics'][epics_t]
 
     def list_boards(self):
         syseng_boards = self.client.list_boards()
@@ -62,32 +67,40 @@ class TrelloCollector(object):
 
 
     def parse_trello(self):
-        collected_content = self.content[':collected_content'];
         trello_sources = self.content[':output_metadata'][':trello_sources'];
         self.logger.debug('The sources are %s' % (trello_sources))
         for board_t in trello_sources.keys():
             tr_board = self.client.get_board(trello_sources[board_t][':board_id']);
+            tr_board.fetch();
             self.logger.debug('considering board %s' % (board_t))
             for list_t in trello_sources[board_t][':lists'].keys():
-                tr_list = tr_board.get_list(trello_sources[board_t][':lists'][list_t][':list_id'])
-                cards = tr_list.list_cards()
-                self.logger.debug('got cards %s' % (cards))
-                json_obj = self.client.fetch_json('/lists/' + trello_sources[board_t][':lists'][list_t][':list_id'] + '/cards/')
-                self.logger.debug('list json is %s' % (json_obj))
-                for card in cards:
-                    collected_content[card.id] = {}
-                    collected_content[card.id][':name'] = card.name.decode("utf-8")
-                    collected_content[card.id][':id'] = card.id
-                    collected_content[card.id][':members'] = card.member_ids
-                    collected_content[card.id][':desc'] = card.desc
-                    try:
-                        collected_content[card.id][':last_updated'] = card.dateLastActivity
-                    except AttributeError as e:
-                        self.logger.debug('attribute error: %s' % (e))
-                        collected_content[card.id][':last_updated'] = ""
-                    collected_content[card.id][':short_url'] = card.url
-                    collected_content[card.id][':labels'] = [label.name.decode("utf-8") for label in card.labels]
-#                    collected_content[card.id][':due_date'] = card.due
-                    self.logger.debug('processed card %s' % (collected_content[card.id]))
-#                    collected_content[card.id][':board_name']
+                self.parse_list(trello_sources[board_t][':lists'][list_t][':list_id'], tr_board, "assignment")
+            for list_t in trello_sources[board_t][':epics'].keys():
+                self.parse_list(trello_sources[board_t][':epics'][list_t][':list_id'], tr_board, "epic")
+            return self.content
+
+    def parse_list(self, list_id, tr_board, list_type):
+        collected_content = self.content[':collected_content'];
+        tr_list = tr_board.get_list(list_id)
+        tr_list.fetch();
+        cards = tr_list.list_cards()
+        self.logger.debug('got cards %s' % (cards))
+        for card in cards:
+            collected_content[card.id] = {}
+            collected_content[card.id][':name'] = card.name.decode("utf-8")
+            collected_content[card.id][':id'] = card.id
+            collected_content[card.id][':members'] = card.member_ids
+            collected_content[card.id][':desc'] = card.desc
+            try:
+                collected_content[card.id][':last_updated'] = card.dateLastActivity
+            except AttributeError as e:
+                self.logger.debug('attribute error: %s' % (e))
+                collected_content[card.id][':last_updated'] = ""
+            collected_content[card.id][':short_url'] = card.url
+            collected_content[card.id][':labels'] = [label.name.decode("utf-8") for label in card.labels]
+            collected_content[card.id][':board_name'] = tr_board.name
+            collected_content[card.id][':list_name'] = tr_list.name
+            collected_content[card.id][':card_type'] = list_type
+#            collected_content[card.id][':due_date'] = card.due
+            self.logger.debug('processed card %s' % (collected_content[card.id]))
         return self.content

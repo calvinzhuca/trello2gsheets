@@ -13,25 +13,26 @@ Data structure on the output of the TrelloCollector
         list2:
           :list_id: "ID2"
           :list_name: "listname2"
+      :epics:
+        list3:
+          :list_id: "id"
+          :list_name: "name"
   :collection_datetime: "datetime"
 :collected_content:
   ID1:
     :name: "name"
     :id: "trello_id"
     :members: ["Memebers", "member2"]
-    :status: "status"
     :last_updated: ""
     :detailed_status: ""
     :short_url: ""
     :board_name: ""
     :list_name: ""
-    :team: ""
-    :type: ""
     :last_move: ""
     :due_date: ""
-    :epic: ""
     :labels: ["l1", "l2"]
     :desc: ""
+    :card_type: "assignment|project|epic"
   ID2:
     :name:
     ...

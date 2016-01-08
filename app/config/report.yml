@@ -1,24 +1,18 @@
 # Report structure
 :trello_sources:
-  new_assignment_structure:
-    :board_id: "565f5bb27fec4f69a51d1657"
+  board_syseng:
+    :board_id: "55b8e03be0b7b68131139cf1"
+    :lists: 
+      :in_progress: "55b8e064fb3f1d621db0746f"
+      :backlog: "55b8e05ebda5066e15c24025"
+      :investigation: "55b8e83c1df82cf0bbd4edba"
+      :completed: "55b8e4428ec04b31597cd5c3"
+  board_e2e:
+    :board_id: "5640b810860935a27a6139d6"
     :lists:
-      :internal: "565f5d59d8abfe6edb57ed93"
-      :unicorns: "565f5bdef6fe5ebc955ad564"
-    :epics: "568ef266d7cb6237c9fa73cf"
-#  board_syseng:
-#    :board_id: "55b8e03be0b7b68131139cf1"
-#    :lists: 
-#      :in_progress: "55b8e064fb3f1d621db0746f"
-#      :backlog: "55b8e05ebda5066e15c24025"
-#      :investigation: "55b8e83c1df82cf0bbd4edba"
-#      :completed: "55b8e4428ec04b31597cd5c3"
-#  board_e2e:
-#    :board_id: "5640b810860935a27a6139d6"
-#    :lists:
-#      :backlog: "5640bb2965cec07628642994"
-#      :next: "5640bb2ac2110e0628dde44a"
-#      :in_progress: "5640bb2c9826d99d92fbfd7b"
+      :backlog: "5640bb2965cec07628642994"
+      :next: "5640bb2ac2110e0628dde44a"
+      :in_progress: "5640bb2c9826d99d92fbfd7b"
 :tags:
   funding_buckets:
     :tag_prefix: "fb_"
