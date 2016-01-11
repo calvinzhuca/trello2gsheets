@@ -36,7 +36,7 @@ def main():
     
     #exporter = gspreadsheet_exporter.GSpreadSheetExporter(report_config);
     unprocessed_report = warehouse.parse_trello();
-    #exporter.write_gspreadsheet(unprocessed_report)
+    #exporter.write_spreadsheet(unprocessed_report)
     logger.debug('Report %s' % (unprocessed_report))
 
 if __name__ == '__main__':

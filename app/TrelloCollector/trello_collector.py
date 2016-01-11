@@ -9,6 +9,7 @@ import logging
 import httplib2
 import datetime
 
+from . import card_details
 
 class TrelloCollector(object):
     """
@@ -101,6 +102,15 @@ class TrelloCollector(object):
             collected_content[card.id][':board_name'] = tr_board.name
             collected_content[card.id][':list_name'] = tr_list.name
             collected_content[card.id][':card_type'] = list_type
-#            collected_content[card.id][':due_date'] = card.due
+            details = self.parse_card_details(card.id)
+            collected_content[card.id][':latest_move'] = details[':latest_move']
+            collected_content[card.id][':detailed_status'] = details[':detailed_status']
+            collected_content[card.id][':due_date'] = details[':due_date']
             self.logger.debug('processed card %s' % (collected_content[card.id]))
         return self.content
+
+    def parse_card_details(self, card_id):
+        card = card_details.CardDetails(card_id, self.client)
+        details = card.fill_details();
+        self.logger.debug('Card\'s details are: %s' % (details))
+        return details
