@@ -2,6 +2,8 @@
 
 from TrelloCollector import trello_collector
 from GSpreadSheetExporter import gspreadsheet_exporter
+from Transformer import data_transformer
+
 import logging
 import tempfile
 import os
@@ -34,10 +36,15 @@ def main():
 
     #warehouse.list_boards();
     
-    #exporter = gspreadsheet_exporter.GSpreadSheetExporter(report_config);
+    exporter = gspreadsheet_exporter.GSpreadSheetExporter(report_config);
     unprocessed_report = warehouse.parse_trello();
-    #exporter.write_spreadsheet(unprocessed_report)
-    logger.debug('Report %s' % (unprocessed_report))
+
+    transformer = data_transformer.DataTransformer(report_config, unprocessed_report)
+
+    transformer.repopulate_report()
+
+    exporter.write_spreadsheet(transformer.dest_report)
+    logger.debug('Report %s' % (transformer.dest_report))
 
 if __name__ == '__main__':
 

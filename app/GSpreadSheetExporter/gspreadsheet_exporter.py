@@ -60,7 +60,11 @@ class GSpreadSheetExporter(object):
         for line in processed_report.keys():
             self.logger.debug('Working on line %s' % (line))
             for c in range(len(self.columns)):
-                cell_range[cell_index].value = processed_report[line][self.columns[c + 1][':key']];
+                try:
+                    cell_range[cell_index].value = processed_report[line][self.columns[c + 1][':key']];
+                except KeyError as err:
+                    cell_range[cell_index].value = ''
+                    self.logger.error('no value for the key in %s. Error: %s' % (processed_report[line], err))
                 cell_index += 1;
         try:
             sheet.update_cells(cell_range);

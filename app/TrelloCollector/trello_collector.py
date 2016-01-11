@@ -73,14 +73,15 @@ class TrelloCollector(object):
         for board_t in trello_sources.keys():
             tr_board = self.client.get_board(trello_sources[board_t][':board_id']);
             tr_board.fetch();
-            self.logger.debug('considering board %s' % (board_t))
+            members = [ (m.id, m.full_name.decode('utf-8')) for m in tr_board.get_members()];
+            self.logger.debug('considering board %s, and members %s' % (board_t, members))
             for list_t in trello_sources[board_t][':lists'].keys():
-                self.parse_list(trello_sources[board_t][':lists'][list_t][':list_id'], tr_board, "assignment")
+                self.parse_list(trello_sources[board_t][':lists'][list_t][':list_id'], tr_board, "assignment", members)
             for list_t in trello_sources[board_t][':epics'].keys():
-                self.parse_list(trello_sources[board_t][':epics'][list_t][':list_id'], tr_board, "epic")
+                self.parse_list(trello_sources[board_t][':epics'][list_t][':list_id'], tr_board, "epic", members)
             return self.content
 
-    def parse_list(self, list_id, tr_board, list_type):
+    def parse_list(self, list_id, tr_board, list_type, members):
         collected_content = self.content[':collected_content'];
         tr_list = tr_board.get_list(list_id)
         tr_list.fetch();
@@ -90,7 +91,11 @@ class TrelloCollector(object):
             collected_content[card.id] = {}
             collected_content[card.id][':name'] = card.name.decode("utf-8")
             collected_content[card.id][':id'] = card.id
-            collected_content[card.id][':members'] = card.member_ids
+            collected_content[card.id][':members'] = []
+            for member_id in card.member_ids:
+                for (m_id, m_full_name) in members:
+                    if member_id == m_id :
+                       collected_content[card.id][':members'].append(m_full_name)
             collected_content[card.id][':desc'] = card.desc
             try:
                 collected_content[card.id][':last_updated'] = card.dateLastActivity
