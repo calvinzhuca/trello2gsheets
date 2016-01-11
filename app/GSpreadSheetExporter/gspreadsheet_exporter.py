@@ -41,6 +41,7 @@ class GSpreadSheetExporter(object):
         self.report = self.gc.open(processed_report[':output_metadata'][':report_name'])
         self.wks_granular = self.report.sheet1
 
+        self.write_headers(self.report.sheet1)
         self.write_batch_data(processed_report[':collected_content'], self.report.sheet1)
 
 
