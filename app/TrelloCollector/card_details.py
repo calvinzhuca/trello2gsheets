@@ -5,6 +5,8 @@ from trello.exceptions import *
 
 import logging
 import re
+import arrow
+
 
 class CardDetails(object):
     """The CardDetails class reprsents a trello assignment card."""
@@ -30,7 +32,7 @@ class CardDetails(object):
             break
         while True:
             try:
-                self._card.fetch_actions(action_filter='commentCard,updateCard:idList,createCard')
+                self._card.fetch_actions(action_filter='commentCard,updateCard:idList,createCard,copyCard')
                 self._actions = sorted(self._card.actions, key = lambda update: update['date'], reverse = True) ; #fetch all card's properties at once
                 #self.logger.debug('Actions are %s' % (self._card.actions))
             except ResourceUnavailable as e:
@@ -53,12 +55,15 @@ class CardDetails(object):
         
         content[':latest_move'] = ''
         for update in self._actions:
-            if (update['type'] == 'createCard' or update['type'] == 'updateCard:idList' ):
-                content[':latest_move'] = update['date']
+            if (update['type'] == 'createCard' or update['type'] == 'updateCard:idList' or update['type'] == 'copyCard'):
+                content[':latest_move'] = arrow.get(update['date']).format('YYYY-MM-DD HH:mm:ss')
                 break;
 
-        content[':due_date'] = self._card.due
-        content[':last_updated'] = self._card.dateLastActivity
+        if self._card.due != '':
+            content[':due_date'] = arrow.get(self._card.due).format('YYYY-MM-DD HH:mm:ss')
+        else:
+            content[':due_date'] = ''
+        content[':last_updated'] = arrow.get(self._card.dateLastActivity).format('YYYY-MM-DD HH:mm:ss')
         return content
 
     def get_name(self):
@@ -135,7 +140,7 @@ class CardDetails(object):
         try:
             self.content['latest_move']=self._card.latestCardMove_date.strftime("%Y-%m-%d %H:%M");
         except IndexError:
-            self.content['latest_move']='';
+            self.content['latest_move'] = self._card.create_date;
         self.content['due_date'] = self._card.due_date;
 
     def get_url(self):

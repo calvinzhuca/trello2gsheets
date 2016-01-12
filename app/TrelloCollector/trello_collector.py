@@ -76,7 +76,7 @@ class TrelloCollector(object):
         tr_list = tr_board.get_list(list_id)
         tr_list.fetch();
         cards = tr_list.list_cards()
-        self.logger.debug('got cards %s' % (cards))
+        self.logger.debug('In list %s got cards %s' % (tr_list.name, cards))
         for card in cards:
             collected_content[card.id] = {}
             collected_content[card.id][':name'] = card.name.decode("utf-8")
