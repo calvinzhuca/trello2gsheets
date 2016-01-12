@@ -7,7 +7,11 @@ class DataTransformer(object):
     """The DataTransformer class reprsents all transformation done to build the resulting report
        split members
        fill in tags, special tags
-       fill in epics"""
+       fill in epics
+       e2e specific:
+         take project from report.yml
+         take epic members from linked assignments
+    """
 
     def __init__(self, _report_config, _source_report):
         """
@@ -20,7 +24,7 @@ class DataTransformer(object):
         self.source_report = _source_report
         self.dest_report = {':collected_content': {} }
         self.dest_report[':output_metadata'] = self.source_report[':output_metadata'].copy()
-        self.special_tags = _report_config[':tags']
+        self.special_tags = _report_config[':transform'][':tags']
 
     def __str__(self):
         return "Report '%s' on '%s' owned by '%s'" % (self.name, self.board_lists)
@@ -31,6 +35,7 @@ class DataTransformer(object):
         for card in source.keys():
             self.apply_tags(source[card]);
             self.apply_labels(source[card]);
+            self.add_for_board(source[card]);
 
             if not source[card][':members']:
                 self.dest_report[':collected_content'][source[card][':id']] = source[card].copy()
@@ -49,7 +54,7 @@ class DataTransformer(object):
         # obtain all tags
         _all_tags = re.findall('\[.*?\]',card[':name'])
         _all_tags.extend(re.findall('\[.*?\]', card[':desc']))
-        self.logger.debug('all tags: %s' % _all_tags)
+        #self.logger.debug('all tags: %s' % _all_tags)
 
         # filter out special tag types, see report.yml for tag types.
         for tag in _all_tags:
@@ -79,3 +84,14 @@ class DataTransformer(object):
             if label == 'Blocked':
                 card[':status'] = '1-Blocked';
                 continue;
+
+    def add_for_board(self, card):
+        """controlled by :add_for_board key in the report.yml
+        will add special project for specific board"""
+        if not self.report_config[':transform'][':add_for_board']:
+            pass;
+        for project in self.report_config[':transform'][':add_for_board'].keys():
+            if card[':board_id'] == self.report_config[':transform'][':add_for_board'][project][':board_id']:
+                card[':project'].append(self.report_config[':transform'][':add_for_board'][project][':project'])
+                card[':team'].append(self.report_config[':transform'][':add_for_board'][project][':team'])
+                return;

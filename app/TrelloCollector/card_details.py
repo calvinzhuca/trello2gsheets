@@ -32,7 +32,7 @@ class CardDetails(object):
             try:
                 self._card.fetch_actions(action_filter='commentCard,updateCard:idList,createCard')
                 self._actions = sorted(self._card.actions, key = lambda update: update['date'], reverse = True) ; #fetch all card's properties at once
-                self.logger.debug('Actions are %s' % (self._card.actions))
+                #self.logger.debug('Actions are %s' % (self._card.actions))
             except ResourceUnavailable as e:
                 self.logger.error('Unable to fetch card actions! %s' % (e))
                 continue
@@ -58,6 +58,7 @@ class CardDetails(object):
                 break;
 
         content[':due_date'] = self._card.due
+        content[':last_updated'] = self._card.dateLastActivity
         return content
 
     def get_name(self):

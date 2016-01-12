@@ -36,13 +36,14 @@ def main():
 
     #warehouse.list_boards();
     
-    exporter = gspreadsheet_exporter.GSpreadSheetExporter(report_config);
     unprocessed_report = warehouse.parse_trello();
 
+    # Transform the Data
     transformer = data_transformer.DataTransformer(report_config, unprocessed_report)
-
     transformer.repopulate_report()
 
+    #Write data to Google SpreadSheets
+    exporter = gspreadsheet_exporter.GSpreadSheetExporter(report_config);
     exporter.write_spreadsheet(transformer.dest_report)
     logger.debug('Report %s' % (transformer.dest_report))
 
