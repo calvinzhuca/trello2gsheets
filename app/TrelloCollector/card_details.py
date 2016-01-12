@@ -25,7 +25,7 @@ class CardDetails(object):
             try:
                 self._card = self.trello.get_card(self._id)
                 self._card.fetch(True); #fetch all card's properties at once
-                self.logger.debug('Card is %s' % (self._card))
+                self.logger.debug('Querying Trello for card: %s' % (self._card))
             except ResourceUnavailable as e:
                 self.logger.error('Trello unavailable! %s' % (e))
                 continue

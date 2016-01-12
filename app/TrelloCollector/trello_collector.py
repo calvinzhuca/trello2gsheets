@@ -26,10 +26,10 @@ class TrelloCollector(object):
         #Extract report configuration parameters
         trello_sources = report_config[':trello_sources'];
         self.report_parameters = report_config[':output_metadata'];
-        gen_date = datetime.datetime.now().strftime("%Y-%m-%d.%H:%M")
+        gen_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 
         self.content = { ':output_metadata' : {
-                              ':report_name': "Assignments Report" + gen_date,
+                              ':report_name': gen_date, #Report name is built as :report_name + gen_date (where :report_name is taken from the config)
                               ':trello_sources': {}}, 
                          ':collected_content': {}}
 

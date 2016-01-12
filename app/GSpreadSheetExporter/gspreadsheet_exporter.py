@@ -26,6 +26,7 @@ class GSpreadSheetExporter(object):
 
         self.columns = report_config[':output_metadata'][':columns'];
         self.template_id = report_config[':output_metadata'][':template_id'];
+        self.report_prefix = report_config[':output_metadata'][':report_name']
 
         self.credentials = self.g_authenticate();
         self.gc = gspread.authorize(self.credentials)
@@ -35,10 +36,11 @@ class GSpreadSheetExporter(object):
 
 
     def write_spreadsheet(self, processed_report):
-        if not (self.copy_file(self.service, self.template_id, processed_report[':output_metadata'][':report_name'])):
+        report_name = self.report_prefix + processed_report[':output_metadata'][':report_name']
+        if not (self.copy_file(self.service, self.template_id, report_name)):
             self.logger.debug('Unable to copy the template %s successfully!' % (self.report))
         self.logger.debug('Copied the template %s successfully!' % (self.template_id))
-        self.report = self.gc.open(processed_report[':output_metadata'][':report_name'])
+        self.report = self.gc.open(report_name)
         self.wks_granular = self.report.sheet1
 
         self.write_headers(self.report.sheet1)

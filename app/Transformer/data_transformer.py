@@ -32,10 +32,18 @@ class DataTransformer(object):
     def repopulate_report(self):
         """main func that repopulates self.dest_report with the processed data"""
         source = self.source_report[':collected_content']
+
+        # before continueing apply epics labels
         for card in source.keys():
-            self.apply_tags(source[card]);
             self.apply_labels(source[card]);
+            self.apply_tags(source[card]);
             self.add_for_board(source[card]);
+
+        # populate members in epics before the loop, since it'll add line items: epic_id + full_name
+        self.fill_epics_info(source);
+
+        # Main cycle to split members in separate line items
+        for card in source.keys():
 
             if not source[card][':members']:
                 self.dest_report[':collected_content'][source[card][':id']] = source[card].copy()
@@ -95,3 +103,21 @@ class DataTransformer(object):
                 card[':project'].append(self.report_config[':transform'][':add_for_board'][project][':project'])
                 card[':team'].append(self.report_config[':transform'][':add_for_board'][project][':team'])
                 return;
+
+    def fill_epics_info(self, source):
+        """specific to e2e board for now. epic members are taken from the related assignments"""
+        assignments = source.copy()
+        for epic_id in source.keys():
+            if source[epic_id][':card_type'] != 'epic' or source[epic_id][':epic'] == '':
+                continue; #not an epic
+            epic_members = set([]) 
+            for a_id in assignments.keys():
+                self.logger.debug('Considering epic %s assignment %s' % (source[epic_id][':epic'], assignments[a_id]))
+                if assignments[a_id][':card_type'] != 'assignment' or assignments[a_id][':epic'] != source[epic_id][':epic'] : #not an assignments, or wrong epic
+                    continue;
+                epic_members = epic_members.union(assignments[a_id][':members'])
+                source[a_id][':epic_friendly'] = source[epic_id][':name']  # add friendly epic name
+                self.logger.debug('Assignmed friendly epic name to %s' % (source[a_id]))
+            source[epic_id][':members'] = list(epic_members)
+            #self.logger.debug('Epic %s has members %s' % (source[epic_id][':name'], source[epic_id][':members']))
+

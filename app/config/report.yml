@@ -33,7 +33,8 @@
       :team: "ContainerILT"
       :board_id: "5640b810860935a27a6139d6"
 :output_metadata:
-  :template_id: "16uTnAlmxKkuhl_1Z3Nq2yS4XDdtZSvW5WGRMep41FWI" #Google spreadsheet template to use for the report
+  :template_id: "1HCvte2iVZ9GsIen3sVMjZySu50IpWjhstxmKBzQLOts" #Google spreadsheet template to use for the report
+  :report_name: "SysEng Assignments Report "
   :columns:
     1:
       :name: "Assignment ID"
@@ -84,8 +85,11 @@
       :name: "Due Date"
       :key: ":due_date"
     17:
-      :name: "Epic"
+      :name: "Epic Label"
       :key: ":epic"
     18:
       :name: "Labels"
       :key: ":labels"
+    19:
+      :name: "Epic"
+      :key: ":epic_friendly"
