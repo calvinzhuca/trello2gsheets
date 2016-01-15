@@ -41,7 +41,7 @@ class GSpreadSheetExporter(object):
             self.logger.debug('Unable to copy the template %s successfully!' % (self.report))
         self.logger.debug('Copied the template %s successfully!' % (self.template_id))
         self.report = self.gc.open(report_name)
-        self.wks_granular = self.report.worksheet('Raw Data')
+        self.wks_granular = self.report.worksheet('Trello Data')
 
         self.write_headers(self.wks_granular)
         self.write_batch_data(processed_report[':collected_content'], self.wks_granular)

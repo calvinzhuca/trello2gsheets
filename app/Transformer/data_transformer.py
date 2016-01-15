@@ -48,10 +48,11 @@ class DataTransformer(object):
             if not source[card][':members']:
                 self.dest_report[':collected_content'][source[card][':id']] = source[card].copy()
                 self.dest_report[':collected_content'][source[card][':id']][':members'] = ''
-            for owner in source[card][':members']:
+                self.dest_report[':collected_content'][source[card][':id']][':user_id'] = ''
+            for (user_id, owner) in source[card][':members']:
                 self.dest_report[':collected_content'][source[card][':id'] + owner] = source[card].copy()
                 self.dest_report[':collected_content'][source[card][':id'] + owner][':members'] = owner
-
+                self.dest_report[':collected_content'][source[card][':id'] + owner][':user_id'] = user_id
 
     def apply_tags(self, card):
         card[':tags'] = [];

@@ -86,7 +86,7 @@ class TrelloCollector(object):
             for member_id in card.member_ids:
                 for (m_id, m_full_name) in members:
                     if member_id == m_id :
-                       collected_content[card.id][':members'].append(m_full_name)
+                       collected_content[card.id][':members'].append((m_id,m_full_name))
             collected_content[card.id][':desc'] = card.desc
             collected_content[card.id][':short_url'] = card.url
             collected_content[card.id][':labels'] = [label.name.decode("utf-8") for label in card.labels]
