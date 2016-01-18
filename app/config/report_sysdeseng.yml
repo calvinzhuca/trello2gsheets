@@ -29,11 +29,11 @@
       :pretty_name: "Team"
   :add_for_board: #map all board's items to specific project
     AOS:
-      :project: "AOS"
+      :project: "AOS E2E"
       :team: "ContainerILT"
       :board_id: "5640b810860935a27a6139d6"
 :output_metadata:
-  :template_id: "1N88gp1QsxCVQsY0rqlh_hxUUHd7n02V91unpU2Kx7pQ" #Google spreadsheet template to use for the report
+  :template_id: "1Qn5yW7DPJKp7l3U9Kasz1h4_UpG0r5-sbBvxGbbzQYk" #Google spreadsheet template to use for the report
   :report_name: "Combined SysDesEng Assignments Report "
   :columns:
     1:
