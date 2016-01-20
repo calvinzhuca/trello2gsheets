@@ -1,24 +1,20 @@
 # Report structure
 :trello_sources:
-  :assignments:
-    board_syseng:
-      :board_id: "55b8e03be0b7b68131139cf1"
+  :epics:
+    board_ose_roadmap:
+      :board_id: "5307a94953d330a60f9e8f00"
       :lists: 
-        :in_progress: "55b8e064fb3f1d621db0746f"
-        :backlog: "55b8e05ebda5066e15c24025"
-        :investigation: "55b8e83c1df82cf0bbd4edba"
-        :completed: "55b8e4428ec04b31597cd5c3"
+        :epic_backlog: "5307a94953d330a60f9e8f02"
+#        :done_3_1: "563f99cc32e714b87f661718"
+#        :done_3_0: "5307a94953d330a60f9e8f03"
+#        :done_2_x: "555e1ab2cb317ecec171718b"
+  :assignments:
     board_e2e:
       :board_id: "5640b810860935a27a6139d6"
       :lists:
         :backlog: "5640bb2965cec07628642994"
         :next: "5640bb2ac2110e0628dde44a"
         :in_progress: "5640bb2c9826d99d92fbfd7b"
-  :epics:
-    board_e2e:
-      :board_id: "5640b810860935a27a6139d6"
-      :lists:
-        :features: "565f025438b850e2051e6974"
 :transform:
   :tags:
     funding_buckets:
@@ -36,8 +32,8 @@
       :team: "ContainerILT"
       :board_id: "5640b810860935a27a6139d6"
 :output_metadata:
-  :template_id: "1jHCOUvI7kHHPeMUK5pQknXSEKtsr_MYZeec01RrQ5uY" #Google spreadsheet template to use for the report
-  :report_name: "Combined SysDesEng Assignments Report "
+  :template_id: "1uaO6Kepx8sbF2RuKq3LClxEAqZIWs_4lHwiDPwq4R5Q" #Google spreadsheet template to use for the report
+  :report_name: "OSE Epics-Assignments Report "
   :columns:
     1:
       :name: "Assignment ID"

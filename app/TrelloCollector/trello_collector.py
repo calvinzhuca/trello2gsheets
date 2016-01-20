@@ -30,26 +30,29 @@ class TrelloCollector(object):
 
         self.content = { ':output_metadata' : {
                               ':report_name': gen_date, #Report name is built as :report_name + gen_date (where :report_name is taken from the config)
-                              ':trello_sources': {}}, 
+                              ':trello_sources': {
+                                ':epics': {},
+                                ':assignments': {}}}, 
                          ':collected_content': {}}
 
-        report_src = self.content[':output_metadata'][':trello_sources']
-        for board_t in trello_sources.keys():
-            report_src[board_t] = {};
-            report_src[board_t][':board_id'] = trello_sources[board_t][':board_id']
-            report_src[board_t][':lists'] = {}
-            report_src[board_t][':epics'] = {}
-            for list_t in trello_sources[board_t][':lists'].keys():
-                self.logger.debug("Adding board %s, list %s to the report" % (trello_sources[board_t][':board_id'], trello_sources[board_t][':lists'][list_t]))
-                report_src[board_t][':lists'][list_t] = {};
-                report_src[board_t][':lists'][list_t][':list_id'] = trello_sources[board_t][':lists'][list_t]
-            try:
-                for epics_t in trello_sources[board_t][':epics'].keys():
-                    self.logger.debug("Adding board %s, epic list %s to the report" % (trello_sources[board_t][':board_id'], trello_sources[board_t][':epics'][epics_t]))
-                    report_src[board_t][':epics'][epics_t] = {};
-                    report_src[board_t][':epics'][epics_t][':list_id'] = trello_sources[board_t][':epics'][epics_t]
-            except (KeyError,AttributeError) as err:
-                self.logger.info('no epics here. %s' % (err))
+        report_src = self.content[':output_metadata'][':trello_sources'][':assignments']
+        self.parse_config_boards(trello_sources[':assignments'], self.content[':output_metadata'][':trello_sources'][':assignments'])
+        if ':epics' in trello_sources:
+            self.parse_config_boards(trello_sources[':epics'], self.content[':output_metadata'][':trello_sources'][':epics'])
+        self.logger.debug("Report output metadata: %s" % (self.content[':output_metadata']))
+
+    def parse_config_boards(self, config_src, report_metadata):
+        """parse config_src dict to add all boards/lists for processing in the report to report_metadata"""
+        for board_t in config_src.keys():
+            report_metadata[board_t] = {};
+            report_metadata[board_t][':board_id'] = config_src[board_t][':board_id'] #copy board id
+
+            #iterate through all the lists and populate them
+            report_metadata[board_t][':lists'] = {}
+            for list_t in config_src[board_t][':lists'].keys():
+                self.logger.debug("Adding board %s, list %s to the report" % (config_src[board_t][':board_id'], config_src[board_t][':lists'][list_t]))
+                report_metadata[board_t][':lists'][list_t] = {};
+                report_metadata[board_t][':lists'][list_t][':list_id'] = config_src[board_t][':lists'][list_t]
 
     def list_boards(self):
         syseng_boards = self.client.list_boards()
@@ -60,15 +63,19 @@ class TrelloCollector(object):
     def parse_trello(self):
         trello_sources = self.content[':output_metadata'][':trello_sources'];
         self.logger.debug('The sources are %s' % (trello_sources))
+
+        self._parse_sources(self.content[':output_metadata'][':trello_sources'][':assignments'], "assignment")
+        self._parse_sources(self.content[':output_metadata'][':trello_sources'][':epics'], "epic")
+        return self.content
+
+    def _parse_sources(self, trello_sources, card_type):
         for board_t in trello_sources.keys():
             tr_board = self.client.get_board(trello_sources[board_t][':board_id']);
             tr_board.fetch();
             members = [ (m.id, m.full_name.decode('utf-8')) for m in tr_board.get_members()];
             self.logger.debug('considering board %s, and members %s' % (board_t, members))
             for list_t in trello_sources[board_t][':lists'].keys():
-                self.parse_list(trello_sources[board_t][':lists'][list_t][':list_id'], tr_board, "assignment", members)
-            for list_t in trello_sources[board_t][':epics'].keys():
-                self.parse_list(trello_sources[board_t][':epics'][list_t][':list_id'], tr_board, "epic", members)
+                self.parse_list(trello_sources[board_t][':lists'][list_t][':list_id'], tr_board, card_type, members)
         return self.content
 
     def parse_list(self, list_id, tr_board, list_type, members):

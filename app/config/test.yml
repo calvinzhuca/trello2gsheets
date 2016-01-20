@@ -1,12 +1,16 @@
 # Report structure
 :trello_sources:
-  new_assignment_structure:
-    :board_id: "565f5bb27fec4f69a51d1657"
-    :lists:
-      :internal: "565f5d59d8abfe6edb57ed93"
-      :unicorns: "565f5bdef6fe5ebc955ad564"
-    :epics:
-      :features: "568ef266d7cb6237c9fa73cf"
+  :assignments:
+    new_assignment_structure:
+      :board_id: "565f5bb27fec4f69a51d1657"
+      :lists:
+        :internal: "565f5d59d8abfe6edb57ed93"
+        :unicorns: "565f5bdef6fe5ebc955ad564"
+  :epics:
+    new_assignment_structure:
+      :board_id: "565f5bb27fec4f69a51d1657"
+      :lists:
+        :features: "568ef266d7cb6237c9fa73cf"
 :transform:
   :tags:
     funding_buckets:
@@ -24,8 +28,8 @@
       :team: "ContainerILT"
       :board_id: "5640b810860935a27a6139d6"
 :output_metadata:
-  :template_id: "1N88gp1QsxCVQsY0rqlh_hxUUHd7n02V91unpU2Kx7pQ" #Google spreadsheet template to use for the report
-  :report_name: "Combined SysDesEng Assignments Report "
+  :template_id: "1lBhmXngGUypuRiusdJhQ8tUIFzMshPD6YZVe0IT-2MA" #Google spreadsheet template to use for the report
+  :report_name: "Test Assignments Report "
   :columns:
     1:
       :name: "Assignment ID"

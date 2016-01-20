@@ -32,7 +32,7 @@ class CardDetails(object):
             break
         while True:
             try:
-                self._card.fetch_actions(action_filter='commentCard,updateCard:idList,createCard,copyCard')
+                self._card.fetch_actions(action_filter='commentCard,updateCard:idList,createCard,copyCard,moveCardToBoard')
                 self._actions = sorted(self._card.actions, key = lambda update: update['date'], reverse = True) ; #fetch all card's properties at once
                 #self.logger.debug('Actions are %s' % (self._card.actions))
             except ResourceUnavailable as e:
@@ -48,14 +48,15 @@ class CardDetails(object):
         content = {}
         self.query_trello()
         content[':detailed_status'] = 'n/a'
-        for update in self._actions:
-            if update['type'] == 'commentCard':
-                content[':detailed_status'] = update['data']['text']
+        for action_comment in self._actions:
+            if action_comment['type'] == 'commentCard':
+                content[':detailed_status'] = action_comment['data']['text']
                 break;
         
         content[':latest_move'] = ''
         for update in self._actions:
-            if (update['type'] == 'createCard' or update['type'] == 'updateCard:idList' or update['type'] == 'copyCard'):
+            #self.logger.debug('Evaluating action for latest move %s' % (update))
+            if (update['type'] == 'createCard' or update['type'] == 'updateCard' or update['type'] == 'copyCard' or update['type'] == 'moveCardToBoard'):
                 content[':latest_move'] = arrow.get(update['date']).format('YYYY-MM-DD HH:mm:ss')
                 break;
 

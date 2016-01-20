@@ -61,7 +61,7 @@ class GSpreadSheetExporter(object):
         # cols - number of columns to write
         cell_index = 0;
         for line in processed_report.keys():
-            self.logger.debug('Working on line %s' % (line))
+        #    self.logger.debug('Working on line %s' % (line))
             for c in range(len(self.columns)):
                 try:
                     cell_range[cell_index].value = processed_report[line][self.columns[c + 1][':key']];
