@@ -36,13 +36,16 @@
     sponsor:
       :tag_prefix: "sponsor_"
       :pretty_name: "Sponsor"
+    epic:
+      :tag_prefix: "epic_"
+      :pretty_name: "Epic tag"
   :add_for_board: #map all board's items to specific project
     AOS:
       :project: "AOS E2E"
       :team: "ContainerILT"
       :board_id: "5640b810860935a27a6139d6"
 :output_metadata:
-  :template_id: "1HBf1TZc8019irAFY5sndV-NFNcZwZl2HGeYab3Z6xgc" #Google spreadsheet template to use for the report
+  :template_id: "11pKRlR0SupnM_KUeSwsCY_WRQRwkTArCGPb2R1bVS4s" #Google spreadsheet template to use for the report
   :report_name: "SysEng Assignments Report "
   :columns:
     1:

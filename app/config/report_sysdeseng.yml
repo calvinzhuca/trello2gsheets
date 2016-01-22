@@ -7,7 +7,7 @@
         :in_progress: "55b8e064fb3f1d621db0746f"
         :backlog: "55b8e05ebda5066e15c24025"
         :investigation: "55b8e83c1df82cf0bbd4edba"
-        :completed: "55b8e4428ec04b31597cd5c3"
+#        :completed: "55b8e4428ec04b31597cd5c3"
     board_e2e:
       :board_id: "5640b810860935a27a6139d6"
       :lists:
@@ -30,13 +30,19 @@
     team:
       :tag_prefix: "team_"
       :pretty_name: "Team"
+    sponsor:
+      :tag_prefix: "sponsor_"
+      :pretty_name: "Sponsor"
+    epic:
+      :tag_prefix: "epic_"
+      :pretty_name: "Epic tag"
   :add_for_board: #map all board's items to specific project
     AOS:
       :project: "AOS E2E"
       :team: "ContainerILT"
       :board_id: "5640b810860935a27a6139d6"
 :output_metadata:
-  :template_id: "1jHCOUvI7kHHPeMUK5pQknXSEKtsr_MYZeec01RrQ5uY" #Google spreadsheet template to use for the report
+  :template_id: "1y5O7ZwpfMit_CZDuruQQuEuKzr1yoTRAMZeYJw8fi7Y" #Google spreadsheet template to use for the report
   :report_name: "Combined SysDesEng Assignments Report "
   :columns:
     1:
@@ -99,3 +105,6 @@
     20:
       :name: "User ID"
       :key: ":user_id"
+    21:
+      :name: "Sponsor"
+      :key: ":sponsor"

@@ -38,6 +38,7 @@ class DataTransformer(object):
             self.apply_labels(source[card]);
             self.apply_tags(source[card]);
             self.add_for_board(source[card]);
+            #self.logger.debug('All card info: %s' % (source[card]))
 
         # populate members in epics before the loop, since it'll add line items: epic_id + full_name
         self.fill_epics_info(source);
@@ -64,6 +65,7 @@ class DataTransformer(object):
         _all_tags = re.findall('\[.*?\]',card[':name'])
         _all_tags.extend(re.findall('\[.*?\]', card[':desc']))
         #self.logger.debug('all tags: %s' % _all_tags)
+        _all_tags = list(set(_all_tags)) # get rid of duplicate tags
 
         # filter out special tag types, see report.yml for tag types.
         for tag in _all_tags:
@@ -78,11 +80,11 @@ class DataTransformer(object):
 
 
     def apply_labels(self, card):
-        card[':epic'] = ''
+#        card[':epic'] = ''
         card[':status'] = 'n/a'
         for label in card[':labels']:
             if label[0:5] == 'epic-':
-                card[':epic'] = label;
+#                card[':epic'] = label;
                 continue;
             if label == 'Ok':
                 card[':status'] = '3-Ok';
@@ -109,7 +111,7 @@ class DataTransformer(object):
         """specific to e2e board for now. epic members are taken from the related assignments"""
         assignments = source.copy()
         for epic_id in source.keys():
-            if source[epic_id][':card_type'] != 'epic' or source[epic_id][':epic'] == '':
+            if source[epic_id][':card_type'] != 'epic' or source[epic_id][':epic'] == []:
                 continue; #not an epic
             epic_members = set([]) 
             for a_id in assignments.keys():

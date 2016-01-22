@@ -27,6 +27,8 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', help='report config', default="config/report.yml")
+    parser.add_argument('--deep-scan', help='query each individual card', dest='deep_scan', action='store_true')
+    parser.set_defaults(deep_scan=False);
     parser.add_argument('action', nargs='?', help='report to produce the report, list to output boards and lists', default="report")
     args = parser.parse_args();
 
