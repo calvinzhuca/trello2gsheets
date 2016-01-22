@@ -57,7 +57,7 @@ class GSpreadSheetExporter(object):
         cell_range = sheet.range(range_name);
         # rows - number of lines to write
 
-        self.logger.debug('Columns from the config are: %s' % (self.columns))
+        #self.logger.debug('Columns from the config are: %s' % (self.columns))
         # cols - number of columns to write
         cell_index = 0;
         for line in processed_report.keys():
@@ -81,10 +81,10 @@ class GSpreadSheetExporter(object):
         write 1st row here as well.
         """
         range_name = 'A1:' + chr(ord('A') + len(self.columns) - 1) + '1'  # TODO: only 26 columns so far
-        self.logger.debug('The header range is %s' % (range_name));
+        #self.logger.debug('The header range is %s' % (range_name));
         cell_range = sheet.range(range_name);
 
-        self.logger.debug('Columns from the config are: %s' % (self.columns))
+        #self.logger.debug('Columns from the config are: %s' % (self.columns))
         for c in range(len(self.columns)):
             cell_range[c].value = self.columns[c + 1][':name'];
         try:

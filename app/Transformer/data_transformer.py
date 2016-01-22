@@ -33,17 +33,18 @@ class DataTransformer(object):
         """main func that repopulates self.dest_report with the processed data"""
         source = self.source_report[':collected_content']
 
-        # before continueing apply epics labels
+        # Order is IMPORTANT
+        # 1. before continueing apply epics, labels, tags as they exist per individual card
         for card in source.keys():
             self.apply_labels(source[card]);
             self.apply_tags(source[card]);
             self.add_for_board(source[card]);
             #self.logger.debug('All card info: %s' % (source[card]))
 
-        # populate members in epics before the loop, since it'll add line items: epic_id + full_name
+        # 2. populate members in epics before the loop, since it'll add line items: epic_id + full_name
         self.fill_epics_info(source);
 
-        # Main cycle to split members in separate line items
+        # 3. Main cycle to split members in separate line items
         for card in source.keys():
 
             if not source[card][':members']:
@@ -80,12 +81,8 @@ class DataTransformer(object):
 
 
     def apply_labels(self, card):
-#        card[':epic'] = ''
         card[':status'] = 'n/a'
         for label in card[':labels']:
-            if label[0:5] == 'epic-':
-#                card[':epic'] = label;
-                continue;
             if label == 'Ok':
                 card[':status'] = '3-Ok';
                 continue;
@@ -104,7 +101,6 @@ class DataTransformer(object):
         for project in self.report_config[':transform'][':add_for_board'].keys():
             if card[':board_id'] == self.report_config[':transform'][':add_for_board'][project][':board_id']:
                 card[':project'].append(self.report_config[':transform'][':add_for_board'][project][':project'])
-                card[':team'].append(self.report_config[':transform'][':add_for_board'][project][':team'])
                 return;
 
     def fill_epics_info(self, source):

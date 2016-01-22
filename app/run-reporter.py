@@ -28,7 +28,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', help='report config', default="config/report.yml")
     parser.add_argument('--deep-scan', help='query each individual card', dest='deep_scan', action='store_true')
-    parser.set_defaults(deep_scan=False);
+    parser.add_argument('--no-deep-scan', help='query each individual card', dest='deep_scan', action='store_false')
+    parser.set_defaults(deep_scan=True);
     parser.add_argument('action', nargs='?', help='report to produce the report, list to output boards and lists', default="report")
     args = parser.parse_args();
 
@@ -48,13 +49,14 @@ def main():
     logger.info('Welcome to the Warehouse!')
 
     if args.action == 'list':
-        warehouse.list_boards();
+        warehouse.list_boards(); #output list of Trello boards and lists 
         return
     elif args.action != 'report':
         logger.error('Unrecognized actions %s' % (args.action))
         return;
 
-    unprocessed_report = warehouse.parse_trello();
+
+    unprocessed_report = warehouse.parse_trello(args.deep_scan);
 
     # Transform the Data
     transformer = data_transformer.DataTransformer(report_config, unprocessed_report)

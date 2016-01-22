@@ -32,7 +32,7 @@ class CardDetails(object):
             break
         while True:
             try:
-                self._card.fetch_actions(action_filter='commentCard,updateCard:idList,createCard,copyCard,moveCardToBoard')
+                self._card.fetch_actions(action_filter='commentCard,updateCard:idList,createCard,copyCard,moveCardToBoard,convertToCardFromCheckItem')
                 self._actions = sorted(self._card.actions, key = lambda update: update['date'], reverse = True) ; #fetch all card's properties at once
                 #self.logger.debug('Actions are %s' % (self._card.actions))
             except ResourceUnavailable as e:
@@ -56,7 +56,7 @@ class CardDetails(object):
         content[':latest_move'] = ''
         for update in self._actions:
             #self.logger.debug('Evaluating action for latest move %s' % (update))
-            if (update['type'] == 'createCard' or update['type'] == 'updateCard' or update['type'] == 'copyCard' or update['type'] == 'moveCardToBoard'):
+            if (update['type'] in ['createCard', 'updateCard', 'copyCard', 'moveCardToBoard', 'convertToCardFromCheckItem']):
                 content[':latest_move'] = arrow.get(update['date']).format('YYYY-MM-DD HH:mm:ss')
                 break;
 

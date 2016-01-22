@@ -30,9 +30,6 @@
     project:
       :tag_prefix: "project_"
       :pretty_name: "Project"
-    team:
-      :tag_prefix: "team_"
-      :pretty_name: "Team"
     sponsor:
       :tag_prefix: "sponsor_"
       :pretty_name: "Sponsor"
@@ -45,7 +42,7 @@
       :team: "ContainerILT"
       :board_id: "5640b810860935a27a6139d6"
 :output_metadata:
-  :template_id: "11pKRlR0SupnM_KUeSwsCY_WRQRwkTArCGPb2R1bVS4s" #Google spreadsheet template to use for the report
+  :template_id: "1-XFEuTpd9qMSYBntbHJr7MlfIb6L6P83u5vdwCjEKEI" #Google spreadsheet template to use for the report
   :report_name: "SysEng Assignments Report "
   :columns:
     1:
@@ -85,29 +82,26 @@
       :name: "List"
       :key: ":list_name"
     13:
-      :name: "Team"
-      :key: ":team"
-    14:
       :name: "Type"
       :key: ":card_type"
-    15:
+    14:
       :name: "Last Moved"
       :key: ":latest_move"
-    16:
+    15:
       :name: "Due Date"
       :key: ":due_date"
-    17:
-      :name: "Epic Label"
+    16:
+      :name: "Epic tag"
       :key: ":epic"
-    18:
+    17:
       :name: "Labels"
       :key: ":labels"
-    19:
+    18:
       :name: "Epic"
       :key: ":epic_friendly"
-    20:
+    19:
       :name: "User ID"
       :key: ":user_id"
-    21:
+    20:
       :name: "Sponsor"
       :key: ":sponsor"

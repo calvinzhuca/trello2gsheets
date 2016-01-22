@@ -60,25 +60,37 @@ class TrelloCollector(object):
             for tlist in board.all_lists():
                 self.logger.debug('board name: %s is here, board ID is: %s; list %s is here, list ID is: %s' % (board.name, board.id, tlist.name, tlist.id)) 
 
-    def parse_trello(self):
+    def parse_trello(self, deep_scan):
+        """Main function to parse all Trello boards and lists.
+        If deep_scan is True the scan will traverse each card, otherwise just a light scan(much faster)"""
         trello_sources = self.content[':output_metadata'][':trello_sources'];
         self.logger.debug('The sources are %s' % (trello_sources))
 
-        self._parse_sources(self.content[':output_metadata'][':trello_sources'][':assignments'], "assignment")
-        self._parse_sources(self.content[':output_metadata'][':trello_sources'][':epics'], "epic")
+        self._parse_sources(self.content[':output_metadata'][':trello_sources'][':assignments'], "assignment", deep_scan)
+        self._parse_sources(self.content[':output_metadata'][':trello_sources'][':epics'], "epic", deep_scan)
         return self.content
 
-    def _parse_sources(self, trello_sources, card_type):
+    def _parse_sources(self, trello_sources, card_type, deep_scan):
+        """Helper function to scan either assignments or epics defined in the config
+        If deep_scan is True the scan will traverse each card, otherwise just a light scan(much faster).
+        trello_sources: dict that contains configuration and output structure
+        card_type: whether we'll be parsing epics or assignments"""
         for board_t in trello_sources.keys():
             tr_board = self.client.get_board(trello_sources[board_t][':board_id']);
             tr_board.fetch();
             members = [ (m.id, m.full_name.decode('utf-8')) for m in tr_board.get_members()];
             self.logger.debug('considering board %s, and members %s' % (board_t, members))
             for list_t in trello_sources[board_t][':lists'].keys():
-                self.parse_list(trello_sources[board_t][':lists'][list_t][':list_id'], tr_board, card_type, members)
+                self._parse_list(trello_sources[board_t][':lists'][list_t][':list_id'], tr_board, card_type, members, deep_scan)
         return self.content
 
-    def parse_list(self, list_id, tr_board, list_type, members):
+    def _parse_list(self, list_id, tr_board, list_type, members, deep_scan):
+        """Parse individual lists.
+        list_id: Trello list ID to be parsed
+        tr_board: py-trello board object, fully fetched
+        list_type: whether this is a list of epics or a list of assignments
+        members: list of tuples (member_id, member_full_name) of all members of the board
+        deep_scan: whether we need to traverse each card"""
         collected_content = self.content[':collected_content'];
         tr_list = tr_board.get_list(list_id)
         tr_list.fetch();
@@ -100,16 +112,23 @@ class TrelloCollector(object):
             collected_content[card.id][':board_name'] = tr_board.name
             collected_content[card.id][':list_name'] = tr_list.name
             collected_content[card.id][':card_type'] = list_type
-            details = self.parse_card_details(card.id)
-            collected_content[card.id][':latest_move'] = details[':latest_move']
-            collected_content[card.id][':detailed_status'] = details[':detailed_status']
-            collected_content[card.id][':due_date'] = details[':due_date']
-            try:
-                collected_content[card.id][':last_updated'] = details[':last_updated']
-            except AttributeError as e:
-                self.logger.debug('attribute error: %s' % (e))
+
+            if deep_scan:
+                details = self.parse_card_details(card.id)
+                collected_content[card.id][':latest_move'] = details[':latest_move']
+                collected_content[card.id][':detailed_status'] = details[':detailed_status']
+                collected_content[card.id][':due_date'] = details[':due_date']
+                try:
+                    collected_content[card.id][':last_updated'] = details[':last_updated']
+                except AttributeError as e:
+                    self.logger.debug('attribute error: %s' % (e))
+                    collected_content[card.id][':last_updated'] = ""
+                #self.logger.debug('processed card %s' % (collected_content[card.id]))
+            else:
+                collected_content[card.id][':latest_move'] = ""
+                collected_content[card.id][':detailed_status'] = ""
+                collected_content[card.id][':due_date'] = ""
                 collected_content[card.id][':last_updated'] = ""
-            #self.logger.debug('processed card %s' % (collected_content[card.id]))
         return self.content
 
     def parse_card_details(self, card_id):
