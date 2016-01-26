@@ -125,10 +125,10 @@ class TrelloCollector(object):
                     collected_content[card.id][':last_updated'] = ""
                 #self.logger.debug('processed card %s' % (collected_content[card.id]))
             else:
-                collected_content[card.id][':latest_move'] = ""
-                collected_content[card.id][':detailed_status'] = ""
-                collected_content[card.id][':due_date'] = ""
-                collected_content[card.id][':last_updated'] = ""
+                collected_content[card.id][':latest_move'] = "not collected"
+                collected_content[card.id][':detailed_status'] = "not collected"
+                collected_content[card.id][':due_date'] = "not collected"
+                collected_content[card.id][':last_updated'] = "not collected"
         return self.content
 
     def parse_card_details(self, card_id):
