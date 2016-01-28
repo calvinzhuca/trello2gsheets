@@ -112,6 +112,7 @@ class TrelloCollector(object):
             collected_content[card.id][':board_name'] = tr_board.name
             collected_content[card.id][':list_name'] = tr_list.name
             collected_content[card.id][':card_type'] = list_type
+            collected_content[card.id][':list_id'] = list_id
 
             if deep_scan:
                 details = self.parse_card_details(card.id)

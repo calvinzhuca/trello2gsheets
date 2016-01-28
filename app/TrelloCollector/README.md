@@ -38,6 +38,7 @@ Data structure on the output of the TrelloCollector
     :labels: ["l1", "l2"]
     :desc: ""
     :card_type: "assignment|project|epic"
+    :list_id: ""
   ID2:
     :name:
     ...

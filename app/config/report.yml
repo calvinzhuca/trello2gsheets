@@ -41,6 +41,10 @@
       :project: "AOS E2E"
       :team: "ContainerILT"
       :board_id: "5640b810860935a27a6139d6"
+  :sprint_list: #The list used for sprints. Sprint properties are taken from the card in this list named 'Sprint XXX'
+    board_e2e:
+      :board_id: "5640b810860935a27a6139d6"
+      :list_id: "5640bb2c9826d99d92fbfd7b"
 :output_metadata:
   :template_id: "16biia3QpVhZVtM1aPGL3QpzvykWvp6YFGI08xsAPPCs" #Google spreadsheet template to use for the report
   :report_name: "SysEng Assignments Report "
