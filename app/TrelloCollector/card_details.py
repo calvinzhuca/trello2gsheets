@@ -10,7 +10,7 @@ import arrow
 
 class CardDetails(object):
     """The CardDetails class reprsents a trello assignment card."""
-    def __init__(self, _id, _trello):
+    def __init__(self, _id, _trello, _config):
         """
         :param _id: ID of the trello card representing this Project
         :param _trello: TrelloClient object
@@ -18,7 +18,7 @@ class CardDetails(object):
         self.trello = _trello
         self._id = _id
         self.logger = logging.getLogger("sysengreporting")
-
+        self.config = _config
 
     def query_trello(self):
         while True:
@@ -60,11 +60,25 @@ class CardDetails(object):
                 content[':latest_move'] = arrow.get(update['date']).format('YYYY-MM-DD HH:mm:ss')
                 break;
 
+        completed_lists = []
+        for board_id in self.config[':trello_sources'][':assignments'].keys():
+            for list_id in self.config[':trello_sources'][':assignments'][board_id][':lists'].keys():
+                if self.config[':trello_sources'][':assignments'][board_id][':lists'][list_id][':completed']:
+                    completed_lists.append(list_id);
+        content[':completed_date'] = ''
+        for action_comment in self._actions:
+            if action_comment['type'] == 'updateCard':
+                if action_comment['data']['listAfter']['id'] in completed_lists:
+                    #self.logger.debug('Evaluating completed_date for  %s' % (update))
+                    content[':completed_date'] = arrow.get(action_comment['date']).format('YYYY-MM-DD HH:mm:ss')
+                break;
+
         if self._card.due != '':
             content[':due_date'] = arrow.get(self._card.due).format('YYYY-MM-DD HH:mm:ss')
         else:
             content[':due_date'] = ''
         content[':last_updated'] = arrow.get(self._card.dateLastActivity).format('YYYY-MM-DD HH:mm:ss')
+        #self.logger.debug('Detailed card info: %s' % (content))
         return content
 
     def get_name(self):

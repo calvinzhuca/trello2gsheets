@@ -4,8 +4,8 @@
     new_assignment_structure:
       :board_id: "565f5bb27fec4f69a51d1657"
       :lists:
-        :internal: "565f5d59d8abfe6edb57ed93"
-        :unicorns: "565f5bdef6fe5ebc955ad564"
+        internal: "565f5d59d8abfe6edb57ed93"
+        unicorns: "565f5bdef6fe5ebc955ad564"
       :done_lists:
         completed: "565f5bdb393ac487c85ca04e"
   :epics:
@@ -97,5 +97,5 @@
       :name: "Sponsor"
       :key: ":sponsor"
     21:
-      :name: "Completed"
-      :key: ":completed"
+      :name: "Completed date"
+      :key: ":completed_date"

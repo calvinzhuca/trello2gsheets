@@ -44,24 +44,28 @@ class TrelloCollector(object):
     def parse_config_boards(self, config_src, report_metadata, card_type):
         """parse config_src dict to add all boards/lists for processing in the report to report_metadata"""
         for board_t in config_src.keys():
-            report_metadata[board_t] = {};
-            report_metadata[board_t][':board_id'] = config_src[board_t][':board_id'] #copy board id
+            board_id = config_src[board_t][':board_id']
+            report_metadata[board_id] = {};
+            report_metadata[board_id][':board_id'] = config_src[board_t][':board_id'] #copy board id
+            report_metadata[board_id][':board_name'] = board_t
 
             #iterate through all the lists and populate them
-            report_metadata[board_t][':lists'] = {}
+            report_metadata[board_id][':lists'] = {}
             for list_t in config_src[board_t][':lists'].keys():
                 self.logger.debug("Adding board %s, list %s to the report" % (config_src[board_t][':board_id'], config_src[board_t][':lists'][list_t]))
-                report_metadata[board_t][':lists'][list_t] = {};
-                report_metadata[board_t][':lists'][list_t][':list_id'] = config_src[board_t][':lists'][list_t]
-                report_metadata[board_t][':lists'][list_t][':completed'] = False;
-                report_metadata[board_t][':lists'][list_t][':card_type'] = card_type;
+                list_id = config_src[board_t][':lists'][list_t]
+                report_metadata[board_id][':lists'][list_id] = {};
+                report_metadata[board_id][':lists'][list_id][':list_id'] = list_id
+                report_metadata[board_id][':lists'][list_id][':completed'] = False;
+                report_metadata[board_id][':lists'][list_id][':card_type'] = card_type;
             if ':done_lists' in config_src[board_t]:
                 for list_t in config_src[board_t][':done_lists'].keys():
                     self.logger.debug("Adding board %s, list %s to the report" % (config_src[board_t][':board_id'], config_src[board_t][':done_lists'][list_t]))
-                    report_metadata[board_t][':lists'][list_t] = {};
-                    report_metadata[board_t][':lists'][list_t][':list_id'] = config_src[board_t][':done_lists'][list_t]
-                    report_metadata[board_t][':lists'][list_t][':completed'] = True;
-                    report_metadata[board_t][':lists'][list_t][':card_type'] = card_type;
+                    list_id = config_src[board_t][':done_lists'][list_t]
+                    report_metadata[board_id][':lists'][list_id] = {};
+                    report_metadata[board_id][':lists'][list_id][':list_id'] = list_id
+                    report_metadata[board_id][':lists'][list_id][':completed'] = True;
+                    report_metadata[board_id][':lists'][list_id][':card_type'] = card_type;
 
     def list_boards(self):
         syseng_boards = self.client.list_boards()
@@ -85,10 +89,10 @@ class TrelloCollector(object):
         trello_sources: dict that contains configuration and output structure
         card_type: whether we'll be parsing epics or assignments"""
         for board_t in trello_sources.keys():
-            tr_board = self.client.get_board(trello_sources[board_t][':board_id']);
+            tr_board = self.client.get_board(board_t);
             tr_board.fetch();
             members = [ (m.id, m.full_name.decode('utf-8')) for m in tr_board.get_members()];
-            self.logger.debug('considering board %s, and members %s' % (board_t, members))
+            self.logger.debug('considering board %s, and members %s' % (trello_sources[board_t][':board_name'], members))
 
             #parse all the regular lists from :lists section of config
             for list_t in trello_sources[board_t][':lists'].keys():
@@ -104,6 +108,7 @@ class TrelloCollector(object):
         members: list of tuples (member_id, member_full_name) of all members of the board
         deep_scan: whether we need to traverse each card"""
         collected_content = self.content[':collected_content'];
+        #self.logger.debug('list_config is %s' % (list_config))
         tr_list = tr_board.get_list(list_config[':list_id'])
         tr_list.fetch();
         cards = tr_list.list_cards()
@@ -132,6 +137,7 @@ class TrelloCollector(object):
                 collected_content[card.id][':latest_move'] = details[':latest_move']
                 collected_content[card.id][':detailed_status'] = details[':detailed_status']
                 collected_content[card.id][':due_date'] = details[':due_date']
+                collected_content[card.id][':completed_date'] = details[':completed_date']
                 try:
                     collected_content[card.id][':last_updated'] = details[':last_updated']
                 except AttributeError as e:
@@ -143,10 +149,11 @@ class TrelloCollector(object):
                 collected_content[card.id][':detailed_status'] = "not collected"
                 collected_content[card.id][':due_date'] = "not collected"
                 collected_content[card.id][':last_updated'] = "not collected"
+                collected_content[card.id][':completed_date'] = "not collected"
         return self.content
 
     def parse_card_details(self, card_id):
-        card = card_details.CardDetails(card_id, self.client)
+        card = card_details.CardDetails(card_id, self.client, self.content[':output_metadata'])
         details = card.fill_details();
         #self.logger.debug('Card\'s details are: %s' % (details))
         return details

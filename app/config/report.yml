@@ -111,5 +111,5 @@
       :name: "Sponsor"
       :key: ":sponsor"
     21:
-      :name: "Completed"
-      :key: ":completed"
+      :name: "Completed Date"
+      :key: ":completed_date"
