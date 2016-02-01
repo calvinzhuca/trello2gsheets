@@ -36,12 +36,12 @@ class TrelloCollector(object):
                          ':collected_content': {}}
 
         report_src = self.content[':output_metadata'][':trello_sources'][':assignments']
-        self.parse_config_boards(trello_sources[':assignments'], self.content[':output_metadata'][':trello_sources'][':assignments'])
+        self.parse_config_boards(trello_sources[':assignments'], self.content[':output_metadata'][':trello_sources'][':assignments'], "assignment")
         if ':epics' in trello_sources:
-            self.parse_config_boards(trello_sources[':epics'], self.content[':output_metadata'][':trello_sources'][':epics'])
+            self.parse_config_boards(trello_sources[':epics'], self.content[':output_metadata'][':trello_sources'][':epics'], "epic")
         self.logger.debug("Report output metadata: %s" % (self.content[':output_metadata']))
 
-    def parse_config_boards(self, config_src, report_metadata):
+    def parse_config_boards(self, config_src, report_metadata, card_type):
         """parse config_src dict to add all boards/lists for processing in the report to report_metadata"""
         for board_t in config_src.keys():
             report_metadata[board_t] = {};
@@ -53,6 +53,15 @@ class TrelloCollector(object):
                 self.logger.debug("Adding board %s, list %s to the report" % (config_src[board_t][':board_id'], config_src[board_t][':lists'][list_t]))
                 report_metadata[board_t][':lists'][list_t] = {};
                 report_metadata[board_t][':lists'][list_t][':list_id'] = config_src[board_t][':lists'][list_t]
+                report_metadata[board_t][':lists'][list_t][':completed'] = False;
+                report_metadata[board_t][':lists'][list_t][':card_type'] = card_type;
+            if ':done_lists' in config_src[board_t]:
+                for list_t in config_src[board_t][':done_lists'].keys():
+                    self.logger.debug("Adding board %s, list %s to the report" % (config_src[board_t][':board_id'], config_src[board_t][':done_lists'][list_t]))
+                    report_metadata[board_t][':lists'][list_t] = {};
+                    report_metadata[board_t][':lists'][list_t][':list_id'] = config_src[board_t][':done_lists'][list_t]
+                    report_metadata[board_t][':lists'][list_t][':completed'] = True;
+                    report_metadata[board_t][':lists'][list_t][':card_type'] = card_type;
 
     def list_boards(self):
         syseng_boards = self.client.list_boards()
@@ -80,11 +89,14 @@ class TrelloCollector(object):
             tr_board.fetch();
             members = [ (m.id, m.full_name.decode('utf-8')) for m in tr_board.get_members()];
             self.logger.debug('considering board %s, and members %s' % (board_t, members))
+
+            #parse all the regular lists from :lists section of config
             for list_t in trello_sources[board_t][':lists'].keys():
-                self._parse_list(trello_sources[board_t][':lists'][list_t][':list_id'], tr_board, card_type, members, deep_scan)
+                self._parse_list(trello_sources[board_t][':lists'][list_t], tr_board, members, deep_scan)
+
         return self.content
 
-    def _parse_list(self, list_id, tr_board, list_type, members, deep_scan):
+    def _parse_list(self, list_config, tr_board, members, deep_scan):
         """Parse individual lists.
         list_id: Trello list ID to be parsed
         tr_board: py-trello board object, fully fetched
@@ -92,7 +104,7 @@ class TrelloCollector(object):
         members: list of tuples (member_id, member_full_name) of all members of the board
         deep_scan: whether we need to traverse each card"""
         collected_content = self.content[':collected_content'];
-        tr_list = tr_board.get_list(list_id)
+        tr_list = tr_board.get_list(list_config[':list_id'])
         tr_list.fetch();
         cards = tr_list.list_cards()
         self.logger.debug('In list %s got cards %s' % (tr_list.name, cards))
@@ -111,8 +123,9 @@ class TrelloCollector(object):
             collected_content[card.id][':labels'] = [label.name.decode("utf-8") for label in card.labels]
             collected_content[card.id][':board_name'] = tr_board.name
             collected_content[card.id][':list_name'] = tr_list.name
-            collected_content[card.id][':card_type'] = list_type
-            collected_content[card.id][':list_id'] = list_id
+            collected_content[card.id][':card_type'] = list_config[':card_type']
+            collected_content[card.id][':list_id'] = list_config[':list_id']
+            collected_content[card.id][':completed'] = list_config[':completed']
 
             if deep_scan:
                 details = self.parse_card_details(card.id)

@@ -46,7 +46,8 @@ class DataTransformer(object):
             self.apply_labels(source[card]);
             self.apply_tags(source[card]);
             self.add_for_board(source[card]);
-            self._add_sprint_data(source[card],sprints);
+            if ':sprint_list' in self.report_config[':transform']:
+                self._add_sprint_data(source[card],sprints);
             #self.logger.debug('All card info: %s' % (source[card]))
 
         # 3. populate members in epics before the loop, since it'll add line items: epic_id + full_name

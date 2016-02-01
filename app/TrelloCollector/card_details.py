@@ -158,4 +158,3 @@ class CardDetails(object):
         self.get_members();
         self.get_detailed_status();
         self.get_url();
-#        self.group_assignments[-1].get_board_list(tr_board.name, tr_list.name);

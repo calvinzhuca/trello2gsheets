@@ -6,6 +6,8 @@
       :lists:
         :internal: "565f5d59d8abfe6edb57ed93"
         :unicorns: "565f5bdef6fe5ebc955ad564"
+      :done_lists:
+        completed: "565f5bdb393ac487c85ca04e"
   :epics:
     new_assignment_structure:
       :board_id: "565f5bb27fec4f69a51d1657"
@@ -19,16 +21,19 @@
     project:
       :tag_prefix: "project_"
       :pretty_name: "Project"
-    team:
-      :tag_prefix: "team_"
-      :pretty_name: "Team"
+    sponsor:
+      :tag_prefix: "sponsor_"
+      :pretty_name: "Sponsor"
+    epic:
+      :tag_prefix: "epic_"
+      :pretty_name: "Epic tag"
   :add_for_board: #map all board's items to specific project
     AOS:
       :project: "AOS"
       :team: "ContainerILT"
       :board_id: "5640b810860935a27a6139d6"
 :output_metadata:
-  :template_id: "1lBhmXngGUypuRiusdJhQ8tUIFzMshPD6YZVe0IT-2MA" #Google spreadsheet template to use for the report
+  :template_id: "19a1tqz9UN5paNDpoPGU_By81O7NbhitM5AQcdVE3oLw" #Google spreadsheet template to use for the report
   :report_name: "Test Assignments Report "
   :columns:
     1:
@@ -68,26 +73,29 @@
       :name: "List"
       :key: ":list_name"
     13:
-      :name: "Team"
-      :key: ":team"
-    14:
       :name: "Type"
       :key: ":card_type"
-    15:
+    14:
       :name: "Last Moved"
       :key: ":latest_move"
-    16:
+    15:
       :name: "Due Date"
       :key: ":due_date"
-    17:
+    16:
       :name: "Epic Label"
       :key: ":epic"
-    18:
+    17:
       :name: "Labels"
       :key: ":labels"
-    19:
+    18:
       :name: "Epic"
       :key: ":epic_friendly"
-    20:
+    19:
       :name: "User ID"
       :key: ":user_id"
+    20:
+      :name: "Sponsor"
+      :key: ":sponsor"
+    21:
+      :name: "Completed"
+      :key: ":completed"

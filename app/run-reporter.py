@@ -51,6 +51,9 @@ def main():
     if args.action == 'list':
         warehouse.list_boards(); #output list of Trello boards and lists 
         return
+    elif args.action == 'update_epics':
+        #warehouse.update_epics();
+        return;
     elif args.action != 'report':
         logger.error('Unrecognized actions %s' % (args.action))
         return;
