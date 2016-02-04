@@ -50,6 +50,7 @@ class DataTransformer(object):
             self.apply_labels(source[card]);
             self.apply_tags(source[card]);
             self.add_for_board(source[card]);
+            self._populate_children(source[card]);
             if ':sprint_list' in self.report_config[':transform']:
                 self._add_sprint_data(source[card],sprints);
             #self.logger.debug('All card info: %s' % (source[card]))
@@ -174,3 +175,12 @@ class DataTransformer(object):
             source[epic_id][':members'] = list(epic_members)
             #self.logger.debug('Epic %s has members %s' % (source[epic_id][':name'], source[epic_id][':members']))
 
+    def _populate_children(self, card):
+        """populate :children for each epic and project with the array of IDs of children cards"""
+        source = self.source_report[':collected_content']
+        if card[':card_type'] == 'project':
+           card[':children'] = []
+           for a_id in source:
+               if ':project' in source[a_id] and ':project' in card:
+                   if source[a_id][':project'] == card[':project']:
+                       card[':children'].append(a_id)

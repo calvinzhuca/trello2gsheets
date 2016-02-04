@@ -3,6 +3,7 @@
 from TrelloCollector import trello_collector
 from GSpreadSheetExporter import gspreadsheet_exporter
 from Transformer import data_transformer
+from UpdateTrello import trello_updater
 
 import logging
 import tempfile
@@ -51,7 +52,14 @@ def main():
     if args.action == 'list':
         warehouse.list_boards(); #output list of Trello boards and lists 
         return
-    elif args.action == 'update_epics':
+    elif args.action == 'update_projects':
+        unprocessed_report = warehouse.parse_trello(False);
+
+        # Transform the Data
+        transformer = data_transformer.DataTransformer(report_config, unprocessed_report)
+        transformer.repopulate_report()
+        updater = trello_updater.TrelloUpdater(transformer.dest_report, trello_secret_config)
+        updater.update_projects()
         #warehouse.update_epics();
         return;
     elif args.action != 'report':
