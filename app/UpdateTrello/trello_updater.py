@@ -39,25 +39,27 @@ class TrelloUpdater(object):
             if self.projects[project][':name'] == 'No Project':
                 no_project = project
 
-            cards_names = []
-            cards_done = []
+            child_cards = [] #tuples of (name of chklist item, state of chklist item)
             #form lists of items for checklists
             for card in list(self.assignments):
                 if self.assignments[card][':project'] == self.projects[project][':project'] and self.projects[project][':project'] != []:
-                    cards_names.append(self.assignments[card][':short_url'] +" (" + self.assignments[card][':list_name'] + ") (" + self.assignments[card][':board_name'] + ")")
-                    cards_done.append(self.assignments[card][':completed'])
+                    chk_item_name = self.assignments[card][':short_url'] +" (" + self.assignments[card][':list_name'] + ") (" + self.assignments[card][':board_name'] + ")"
+                    child_cards.append((chk_item_name, self.assignments[card][':completed']))
                     #self.logger.debug('Appending assignment %s to the project %s' % (self.assignments[card], self.projects[project][':name']))
                     self.assignments.pop(card,None)
-            #self.logger.debug("Project %s has assignments %s with completion states: %s" % (self.projects[project][':name'], cards_names, cards_done))
-            self.update_card(project, cards_names, cards_done);
+            self.logger.debug("Project %s has assignments : %s" % (self.projects[project][':name'], child_cards))
+            child_cards.sort(key = lambda x: x[1]) # Sort, so that unresolved cards are on top
+            self.update_card(project, [ i[0] for i in child_cards] ,  [ i[1] for i in child_cards]);
 
         #assign items with no project to a special project card
-        cards_names = []
-        cards_done = []
+        child_cards = []
         for card in self.assignments:
-            cards_names.append(self.assignments[card][':short_url'] +" (" + self.assignments[card][':list_name'] + ") (" + self.assignments[card][':board_name'] + ")")
-            cards_done.append(self.assignments[card][':completed'])
-        self.update_card(no_project, cards_names, cards_done)
+            chk_item_name = self.assignments[card][':short_url'] +" (" + self.assignments[card][':list_name'] + ") (" + self.assignments[card][':board_name'] + ")"
+            child_cards.append((chk_item_name, self.assignments[card][':completed']))
+            #self.logger.debug('Appending assignment %s to the No Project' % (self.assignments[card]))
+        child_cards.sort(key = lambda x: x[1])
+        self.logger.debug("Project %s has assignments : %s" % (self.projects[project][':name'], child_cards))
+        self.update_card(no_project, [ i[0] for i in child_cards] ,  [ i[1] for i in child_cards]);
 
     def update_card(self, card_id, checklist_names, checklist_states):
         """
