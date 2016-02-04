@@ -13,6 +13,11 @@
       :board_id: "565f5bb27fec4f69a51d1657"
       :lists:
         :features: "568ef266d7cb6237c9fa73cf"
+  :projects:
+    new_assignment_structure:
+      :board_id: "565f5bb27fec4f69a51d1657"
+      :lists:
+        :projects: "565f5bc6e3e4f310db567f0a"
 :transform:
   :tags:
     funding_buckets:

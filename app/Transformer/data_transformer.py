@@ -22,7 +22,11 @@ class DataTransformer(object):
 
         self.report_config = _report_config
         self.source_report = _source_report
-        self.dest_report = {':collected_content': {} }
+        self.dest_report = {':collected_content': {
+                               ':assignments': {},
+                               ':epics': {},
+                               ':projects': {}
+                           } }
         self.dest_report[':output_metadata'] = self.source_report[':output_metadata'].copy()
         self.special_tags = _report_config[':transform'][':tags']
 
@@ -54,16 +58,37 @@ class DataTransformer(object):
         self.fill_epics_info(source);
 
         # 4. Main cycle to split members in separate line items
+        dest_assignments = self.dest_report[':collected_content'][':assignments']
+        dest_epics = self.dest_report[':collected_content'][':epics']
+        dest_projects = self.dest_report[':collected_content'][':projects']
         for card in source.keys():
-
-            if not source[card][':members']:
-                self.dest_report[':collected_content'][source[card][':id']] = source[card].copy()
-                self.dest_report[':collected_content'][source[card][':id']][':members'] = ''
-                self.dest_report[':collected_content'][source[card][':id']][':user_id'] = ''
-            for (user_id, owner) in source[card][':members']:
-                self.dest_report[':collected_content'][source[card][':id'] + owner] = source[card].copy()
-                self.dest_report[':collected_content'][source[card][':id'] + owner][':members'] = owner
-                self.dest_report[':collected_content'][source[card][':id'] + owner][':user_id'] = user_id
+            if source[card][':card_type'] == 'assignment':
+                if not source[card][':members']:
+                    dest_assignments[source[card][':id']] = source[card].copy()
+                    dest_assignments[source[card][':id']][':members'] = ''
+                    dest_assignments[source[card][':id']][':user_id'] = ''
+                for (user_id, owner) in source[card][':members']:
+                    dest_assignments[source[card][':id'] + owner] = source[card].copy()
+                    dest_assignments[source[card][':id'] + owner][':members'] = owner
+                    dest_assignments[source[card][':id'] + owner][':user_id'] = user_id
+            elif source[card][':card_type'] == 'epic':
+                if not source[card][':members']:
+                    dest_epics[source[card][':id']] = source[card].copy()
+                    dest_epics[source[card][':id']][':members'] = ''
+                    dest_epics[source[card][':id']][':user_id'] = ''
+                for (user_id, owner) in source[card][':members']:
+                    dest_epics[source[card][':id'] + owner] = source[card].copy()
+                    dest_epics[source[card][':id'] + owner][':members'] = owner
+                    dest_epics[source[card][':id'] + owner][':user_id'] = user_id
+            elif source[card][':card_type'] == 'project':
+                if not source[card][':members']:
+                    dest_projects[source[card][':id']] = source[card].copy()
+                    dest_projects[source[card][':id']][':members'] = ''
+                    dest_projects[source[card][':id']][':user_id'] = ''
+                for (user_id, owner) in source[card][':members']:
+                    dest_projects[source[card][':id'] + owner] = source[card].copy()
+                    dest_projects[source[card][':id'] + owner][':members'] = owner
+                    dest_projects[source[card][':id'] + owner][':user_id'] = user_id
 
     def apply_tags(self, card):
         card[':tags'] = [];

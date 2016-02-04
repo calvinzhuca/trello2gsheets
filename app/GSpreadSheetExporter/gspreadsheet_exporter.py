@@ -52,7 +52,8 @@ class GSpreadSheetExporter(object):
         """
         Iterate through all the rows/columns and write the actual data
         """
-        range_name = 'A2:' + chr(ord('A') + len(self.columns) - 1) + str(len(processed_report) + 1) # TODO: only 26 columns so far
+        total_rows = len(processed_report[':assignments']) + len(processed_report[':epics']) + len(processed_report[':projects'])
+        range_name = 'A2:' + chr(ord('A') + len(self.columns) - 1) + str(total_rows + 1) # TODO: only 26 columns so far
         self.logger.debug('The worksheet range is %s' % (range_name));
         cell_range = sheet.range(range_name);
         # rows - number of lines to write
@@ -60,15 +61,18 @@ class GSpreadSheetExporter(object):
         #self.logger.debug('Columns from the config are: %s' % (self.columns))
         # cols - number of columns to write
         cell_index = 0;
-        for line in processed_report.keys():
-        #    self.logger.debug('Working on line %s' % (line))
-            for c in range(len(self.columns)):
-                try:
-                    cell_range[cell_index].value = processed_report[line][self.columns[c + 1][':key']];
-                except KeyError as err:
-                    cell_range[cell_index].value = ''
-                    #self.logger.error('no value for the key in %s. Error: %s' % (processed_report[line], err))
-                cell_index += 1;
+        for workitem in processed_report.keys():
+            for line in processed_report[workitem].keys():
+                #self.logger.debug('Working on line %s' % (line))
+                for c in range(len(self.columns)):
+                    try:
+                        cell_range[cell_index].value = processed_report[workitem][line][self.columns[c + 1][':key']];
+                    except KeyError as err:
+                        cell_range[cell_index].value = ''
+                        #self.logger.error('no value for the key in %s. Error: %s' % (processed_report[line], err))
+                    cell_index += 1;
+
+        # Write to Google SpreadSheets
         try:
             sheet.update_cells(cell_range);
         except IndexError as e:

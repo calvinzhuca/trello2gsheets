@@ -32,6 +32,7 @@ class TrelloCollector(object):
                               ':report_name': gen_date, #Report name is built as :report_name + gen_date (where :report_name is taken from the config)
                               ':trello_sources': {
                                 ':epics': {},
+                                ':projects': {},
                                 ':assignments': {}}}, 
                          ':collected_content': {}}
 
@@ -39,6 +40,8 @@ class TrelloCollector(object):
         self.parse_config_boards(trello_sources[':assignments'], self.content[':output_metadata'][':trello_sources'][':assignments'], "assignment")
         if ':epics' in trello_sources:
             self.parse_config_boards(trello_sources[':epics'], self.content[':output_metadata'][':trello_sources'][':epics'], "epic")
+        if ':projects' in trello_sources:
+            self.parse_config_boards(trello_sources[':projects'], self.content[':output_metadata'][':trello_sources'][':projects'], "project")
         self.logger.debug("Report output metadata: %s" % (self.content[':output_metadata']))
 
     def parse_config_boards(self, config_src, report_metadata, card_type):
@@ -81,6 +84,7 @@ class TrelloCollector(object):
 
         self._parse_sources(self.content[':output_metadata'][':trello_sources'][':assignments'], "assignment", deep_scan)
         self._parse_sources(self.content[':output_metadata'][':trello_sources'][':epics'], "epic", deep_scan)
+        self._parse_sources(self.content[':output_metadata'][':trello_sources'][':projects'], "project", deep_scan)
         return self.content
 
     def _parse_sources(self, trello_sources, card_type, deep_scan):
