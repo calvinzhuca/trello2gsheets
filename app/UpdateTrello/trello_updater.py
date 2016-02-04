@@ -33,6 +33,7 @@ class TrelloUpdater(object):
 
     def update_projects(self):
         """Main function to update all project cards from config."""
+        self.logger.info('---Started writing to Trello---')
         for project in self.projects:
             #find special card for no projects
             if self.projects[project][':name'] == 'No Project':
@@ -42,9 +43,10 @@ class TrelloUpdater(object):
             cards_done = []
             #form lists of items for checklists
             for card in list(self.assignments):
-                if self.assignments[card][':project'] == self.projects[project][':project']:
+                if self.assignments[card][':project'] == self.projects[project][':project'] and self.projects[project][':project'] != []:
                     cards_names.append(self.assignments[card][':short_url'] +" (" + self.assignments[card][':list_name'] + ") (" + self.assignments[card][':board_name'] + ")")
                     cards_done.append(self.assignments[card][':completed'])
+                    #self.logger.debug('Appending assignment %s to the project %s' % (self.assignments[card], self.projects[project][':name']))
                     self.assignments.pop(card,None)
             #self.logger.debug("Project %s has assignments %s with completion states: %s" % (self.projects[project][':name'], cards_names, cards_done))
             self.update_card(project, cards_names, cards_done);
@@ -53,7 +55,7 @@ class TrelloUpdater(object):
         cards_names = []
         cards_done = []
         for card in self.assignments:
-            cards_names.append(self.assignments[card][':short_url'] +" (" + self.assignments[card][':list_name'] + ") (" + self.assignments[card][':board_name'])
+            cards_names.append(self.assignments[card][':short_url'] +" (" + self.assignments[card][':list_name'] + ") (" + self.assignments[card][':board_name'] + ")")
             cards_done.append(self.assignments[card][':completed'])
         self.update_card(no_project, cards_names, cards_done)
 

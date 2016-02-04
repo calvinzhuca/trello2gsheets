@@ -13,7 +13,7 @@ class DataTransformer(object):
          take epic members from linked assignments
     """
 
-    def __init__(self, _report_config, _source_report):
+    def __init__(self, _report_config, _source_report, _split_members):
         """
         :param _report_config: report configuration(particularly the tag information
         :param _source_report: unprocessed report
@@ -29,6 +29,7 @@ class DataTransformer(object):
                            } }
         self.dest_report[':output_metadata'] = self.source_report[':output_metadata'].copy()
         self.special_tags = _report_config[':transform'][':tags']
+        self.split_members = _split_members
 
     def __str__(self):
         return "Report '%s' on '%s' owned by '%s'" % (self.name, self.board_lists)
@@ -64,32 +65,25 @@ class DataTransformer(object):
         dest_projects = self.dest_report[':collected_content'][':projects']
         for card in source.keys():
             if source[card][':card_type'] == 'assignment':
-                if not source[card][':members']:
-                    dest_assignments[source[card][':id']] = source[card].copy()
-                    dest_assignments[source[card][':id']][':members'] = ''
-                    dest_assignments[source[card][':id']][':user_id'] = ''
-                for (user_id, owner) in source[card][':members']:
-                    dest_assignments[source[card][':id'] + owner] = source[card].copy()
-                    dest_assignments[source[card][':id'] + owner][':members'] = owner
-                    dest_assignments[source[card][':id'] + owner][':user_id'] = user_id
+                self._process_card(card, dest_assignments);
             elif source[card][':card_type'] == 'epic':
-                if not source[card][':members']:
-                    dest_epics[source[card][':id']] = source[card].copy()
-                    dest_epics[source[card][':id']][':members'] = ''
-                    dest_epics[source[card][':id']][':user_id'] = ''
-                for (user_id, owner) in source[card][':members']:
-                    dest_epics[source[card][':id'] + owner] = source[card].copy()
-                    dest_epics[source[card][':id'] + owner][':members'] = owner
-                    dest_epics[source[card][':id'] + owner][':user_id'] = user_id
+                self._process_card(card, dest_epics);
             elif source[card][':card_type'] == 'project':
-                if not source[card][':members']:
-                    dest_projects[source[card][':id']] = source[card].copy()
-                    dest_projects[source[card][':id']][':members'] = ''
-                    dest_projects[source[card][':id']][':user_id'] = ''
-                for (user_id, owner) in source[card][':members']:
-                    dest_projects[source[card][':id'] + owner] = source[card].copy()
-                    dest_projects[source[card][':id'] + owner][':members'] = owner
-                    dest_projects[source[card][':id'] + owner][':user_id'] = user_id
+                self._process_card(card, dest_projects);
+
+    def _process_card(self, card, dest_section):
+        source = self.source_report[':collected_content']
+        if not self.split_members:
+            dest_section[source[card][':id']] = source[card].copy()
+            return;
+        if not source[card][':members']:
+            dest_section[source[card][':id']] = source[card].copy()
+            dest_section[source[card][':id']][':members'] = ''
+            dest_section[source[card][':id']][':user_id'] = ''
+        for (user_id, owner) in source[card][':members']:
+            dest_section[source[card][':id'] + owner] = source[card].copy()
+            dest_section[source[card][':id'] + owner][':members'] = owner
+            dest_section[source[card][':id'] + owner][':user_id'] = user_id
 
     def apply_tags(self, card):
         card[':tags'] = [];
@@ -131,8 +125,8 @@ class DataTransformer(object):
     def add_for_board(self, card):
         """controlled by :add_for_board key in the report.yml
         will add special project for specific board"""
-        if not self.report_config[':transform'][':add_for_board']:
-            pass;
+        if not ':add_for_board' in  self.report_config[':transform']:
+            return;
         for project in self.report_config[':transform'][':add_for_board'].keys():
             if card[':board_id'] == self.report_config[':transform'][':add_for_board'][project][':board_id']:
                 card[':project'].append(self.report_config[':transform'][':add_for_board'][project][':project'])

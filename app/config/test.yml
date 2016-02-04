@@ -104,3 +104,6 @@
     21:
       :name: "Completed date"
       :key: ":completed_date"
+    22:
+      :name: "Children"
+      :key: ":children"

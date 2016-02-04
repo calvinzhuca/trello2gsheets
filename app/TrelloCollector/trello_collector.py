@@ -25,7 +25,7 @@ class TrelloCollector(object):
 
         #Extract report configuration parameters
         trello_sources = report_config[':trello_sources'];
-        self.report_parameters = report_config[':output_metadata'];
+        #self.report_parameters = report_config[':output_metadata'];
         gen_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 
         self.content = { ':output_metadata' : {

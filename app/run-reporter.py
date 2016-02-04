@@ -56,7 +56,7 @@ def main():
         unprocessed_report = warehouse.parse_trello(False);
 
         # Transform the Data
-        transformer = data_transformer.DataTransformer(report_config, unprocessed_report)
+        transformer = data_transformer.DataTransformer(report_config, unprocessed_report, False)
         transformer.repopulate_report()
         updater = trello_updater.TrelloUpdater(transformer.dest_report, trello_secret_config)
         updater.update_projects()
@@ -70,7 +70,7 @@ def main():
     unprocessed_report = warehouse.parse_trello(args.deep_scan);
 
     # Transform the Data
-    transformer = data_transformer.DataTransformer(report_config, unprocessed_report)
+    transformer = data_transformer.DataTransformer(report_config, unprocessed_report, True)
     transformer.repopulate_report()
 
     #Write data to Google SpreadSheets
