@@ -2,6 +2,7 @@
 
 import logging
 import re
+import arrow
 
 class DataTransformer(object):
     """The DataTransformer class reprsents all transformation done to build the resulting report
@@ -27,7 +28,8 @@ class DataTransformer(object):
                                ':epics': {},
                                ':projects': {}
                            } }
-        self.dest_report[':output_metadata'] = self.source_report[':output_metadata'].copy()
+        self.dest_report[':output_metadata'] =  {}
+        self.dest_report[':output_metadata'][':gen_date'] = self.source_report[':output_metadata'][':gen_date']
         self.special_tags = _report_config[':transform'][':tags']
         self.split_members = _split_members
 
@@ -36,18 +38,21 @@ class DataTransformer(object):
 
     def repopulate_report(self):
         """main func that repopulates self.dest_report with the processed data"""
+
+        self.add_list_data()
         source = self.source_report[':collected_content']
 
         # Order is IMPORTANT
-        # 1. Add Sprint information per :sprint_list config parameter in the configuration file.
+        # 1.  Apply external info from the config to cards. f.e. Add Sprint information per :sprint_list config parameter in the configuration file.
         if ':sprint_list' in self.report_config[':transform']:
             sprints = []
             for board in self.report_config[':transform'][':sprint_list'].keys():
                 # Find the Sprint card
                 sprints.append(self._find_sprint_card(self.report_config[':transform'][':sprint_list'][board]))
 
-        # 2. before continueing apply epics, labels, tags as they exist per individual card
+        # 2. Per card actions. before continueing apply epics, labels, tags as they exist per individual card
         for card in source.keys():
+            self.apply_actions(source[card]);
             self.apply_labels(source[card]);
             self.apply_tags(source[card]);
             self.add_for_board(source[card]);
@@ -56,10 +61,10 @@ class DataTransformer(object):
                 self._add_sprint_data(source[card],sprints);
             #self.logger.debug('All card info: %s' % (source[card]))
 
-        # 3. populate members in epics before the loop, since it'll add line items: epic_id + full_name
+        # 3. Per card actions. populate members in epics before the loop, since it'll add line items: epic_id + full_name
         self.fill_epics_info(source);
 
-        # 4. Main cycle to split members in separate line items
+        # 4. Per member-card actions. Main cycle to split members in separate line items
         dest_assignments = self.dest_report[':collected_content'][':assignments']
         dest_epics = self.dest_report[':collected_content'][':epics']
         dest_projects = self.dest_report[':collected_content'][':projects']
@@ -70,6 +75,8 @@ class DataTransformer(object):
                 self._process_card(card, dest_epics);
             elif source[card][':card_type'] == 'project':
                 self._process_card(card, dest_projects);
+            else:
+                self.logger.error('Lost card %s' % (card))
 
     def _process_card(self, card, dest_section):
         source = self.source_report[':collected_content']
@@ -178,3 +185,50 @@ class DataTransformer(object):
                if ':project' in source[a_id] and ':project' in card:
                    if source[a_id][':project'] == card[':project']:
                        card[':children'].append(a_id)
+
+    def add_list_data(self):
+        """
+        Add list_name, card_type, completed fields to the card.
+        put it in the correct card_type bucket.
+        """
+
+        self.source_report[':collected_content'] = {}
+
+        tr_lists = self.source_report[':output_metadata'][':trello_sources'][':lists']
+        self.logger.debug('The lists are %s' % (tr_lists))
+        for card in self.source_report[':output_metadata'][':trello_sources'][':cards']:
+            self.logger.debug('adding list data to the card %s' % (card))
+            list_id = card[':list_id']
+            if not list_id in tr_lists: #list is not included in the reports
+                continue;
+            card[':card_type'] = tr_lists[list_id][':card_type'][1:-1]
+            card[':list_name'] = tr_lists[list_id][':name']
+            card[':completed'] = tr_lists[list_id][':completed']
+            self.source_report[':collected_content'][card[':id']] = card
+
+    def apply_actions(self, card):
+        """
+        :card: card to which to apply the actions
+        The actions are added to this card: latest_move, latest comment(detailed_status), completed_date
+        """
+        unsorted_comments = []
+        for comment in self.source_report[':output_metadata'][':trello_sources'][':boards'][card[':board_id']][':actions']:
+            if comment['data']['card']['id'] == card[':id'] and comment['type'] == 'commentCard':
+                unsorted_comments.append((comment['data']['text'], arrow.get(comment['date']).format('YYYY-MM-DD HH:mm:ss')))
+        #self.logger.debug('For card %s, the comments are %s' % (card,unsorted_comments))
+        if len(unsorted_comments) > 0:
+            comments = sorted(unsorted_comments, key=lambda x: x[-1], reverse=True)
+            #self.logger.debug("The last comment is '{0}'".format(comments[0]))
+            card[':detailed_status'] = comments[0][0]
+            card[':comment_date'] = comments[0][1]
+
+
+        unsorted_actions = []
+        for action in self.source_report[':output_metadata'][':trello_sources'][':boards'][card[':board_id']][':actions']:
+            if action['data']['card']['id'] == card[':id'] and action['type'] in ['createCard', 'updateCard', 'copyCard', 'moveCardToBoard', 'convertToCardFromCheckItem']:
+                unsorted_actions.append(arrow.get(action['date']).format('YYYY-MM-DD HH:mm:ss'))
+        #self.logger.debug('For card %s, the actions are %s' % (card,unsorted_actions))
+        if len(unsorted_actions) > 0:
+            actions = sorted(unsorted_actions, reverse=True)
+            #self.logger.debug("The last action is '{0}'".format(actions[0]))
+            card[':latest_move'] = actions[0]

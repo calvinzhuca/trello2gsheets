@@ -36,7 +36,7 @@ class GSpreadSheetExporter(object):
 
 
     def write_spreadsheet(self, processed_report):
-        report_name = self.report_prefix + processed_report[':output_metadata'][':report_name']
+        report_name = self.report_prefix + processed_report[':output_metadata'][':gen_date']
         if not (self.copy_file(self.service, self.template_id, report_name)):
             self.logger.debug('Unable to copy the template %s successfully!' % (self.report))
         self.logger.debug('Copied the template %s successfully!' % (self.template_id))

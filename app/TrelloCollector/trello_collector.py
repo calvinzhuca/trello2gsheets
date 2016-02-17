@@ -29,46 +29,48 @@ class TrelloCollector(object):
         gen_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 
         self.content = { ':output_metadata' : {
-                              ':report_name': gen_date, #Report name is built as :report_name + gen_date (where :report_name is taken from the config)
+                              ':gen_date': gen_date, #Report name is built as :report_name + gen_date (where :report_name is taken from the config)
                               ':trello_sources': {
-                                ':epics': {},
-                                ':projects': {},
-                                ':assignments': {}}}, 
-                         ':collected_content': {}}
+                                 ':boards':{},
+                                 ':lists': {},
+                                 ':cards': [] }}}
 
-        report_src = self.content[':output_metadata'][':trello_sources'][':assignments']
-        self.parse_config_boards(trello_sources[':assignments'], self.content[':output_metadata'][':trello_sources'][':assignments'], "assignment")
-        if ':epics' in trello_sources:
-            self.parse_config_boards(trello_sources[':epics'], self.content[':output_metadata'][':trello_sources'][':epics'], "epic")
-        if ':projects' in trello_sources:
-            self.parse_config_boards(trello_sources[':projects'], self.content[':output_metadata'][':trello_sources'][':projects'], "project")
+        self.load_config(trello_sources, self.content[':output_metadata'][':trello_sources'])
         self.logger.debug("Report output metadata: %s" % (self.content[':output_metadata']))
 
-    def parse_config_boards(self, config_src, report_metadata, card_type):
-        """parse config_src dict to add all boards/lists for processing in the report to report_metadata"""
-        for board_t in config_src.keys():
-            board_id = config_src[board_t][':board_id']
-            report_metadata[board_id] = {};
-            report_metadata[board_id][':board_id'] = config_src[board_t][':board_id'] #copy board id
-            report_metadata[board_id][':board_name'] = board_t
+    def load_config(self, config_src, report_metadata):
+        """ load all config data related to trello sources and structure them in the report_metadata"""
+        for card_type in config_src.keys(): #card_type is project|assignment|epic
+            for board_t in config_src[card_type].keys():
+                board_id = config_src[card_type][board_t][':board_id']
+                if not board_id in report_metadata: # initialize if the board wasn't present during the iterations over other card_type's
+                    if not board_id in report_metadata[':boards']:
+                        report_metadata[':boards'][board_id] = {};
+                    report_metadata[':boards'][board_id][':board_id'] = config_src[card_type][board_t][':board_id'] #copy board id
+                    report_metadata[':boards'][board_id][':board_name'] = board_t
+                    if not ':lists' in report_metadata[':boards'][board_id]:
+                        report_metadata[':boards'][board_id][':lists'] = []
 
-            #iterate through all the lists and populate them
-            report_metadata[board_id][':lists'] = {}
-            for list_t in config_src[board_t][':lists'].keys():
-                self.logger.debug("Adding board %s, list %s to the report" % (config_src[board_t][':board_id'], config_src[board_t][':lists'][list_t]))
-                list_id = config_src[board_t][':lists'][list_t]
-                report_metadata[board_id][':lists'][list_id] = {};
-                report_metadata[board_id][':lists'][list_id][':list_id'] = list_id
-                report_metadata[board_id][':lists'][list_id][':completed'] = False;
-                report_metadata[board_id][':lists'][list_id][':card_type'] = card_type;
-            if ':done_lists' in config_src[board_t]:
-                for list_t in config_src[board_t][':done_lists'].keys():
-                    self.logger.debug("Adding board %s, list %s to the report" % (config_src[board_t][':board_id'], config_src[board_t][':done_lists'][list_t]))
-                    list_id = config_src[board_t][':done_lists'][list_t]
-                    report_metadata[board_id][':lists'][list_id] = {};
-                    report_metadata[board_id][':lists'][list_id][':list_id'] = list_id
-                    report_metadata[board_id][':lists'][list_id][':completed'] = True;
-                    report_metadata[board_id][':lists'][list_id][':card_type'] = card_type;
+                #iterate through all the lists and populate them
+                for list_t in config_src[card_type][board_t][':lists'].keys():
+                    self.logger.debug("Adding board %s, list %s to the report" % (config_src[card_type][board_t][':board_id'], config_src[card_type][board_t][':lists'][list_t]))
+                    list_id = config_src[card_type][board_t][':lists'][list_t]
+                    report_metadata[':lists'][list_id] = {};
+                    report_metadata[':lists'][list_id][':list_id'] = list_id
+                    report_metadata[':lists'][list_id][':completed'] = False;
+                    report_metadata[':lists'][list_id][':card_type'] = card_type;
+                    report_metadata[':lists'][list_id][':board_id'] = board_id
+                    report_metadata[':boards'][board_id][':lists'].append(list_id)
+                if ':done_lists' in config_src[card_type][board_t]:
+                    for list_t in config_src[card_type][board_t][':done_lists'].keys():
+                        self.logger.debug("Adding board %s, Done list %s to the report" % (config_src[card_type][board_t][':board_id'], config_src[card_type][board_t][':done_lists'][list_t]))
+                        list_id = config_src[card_type][board_t][':done_lists'][list_t]
+                        report_metadata[':lists'][list_id] = {};
+                        report_metadata[':lists'][list_id][':list_id'] = list_id
+                        report_metadata[':lists'][list_id][':completed'] = True;
+                        report_metadata[':lists'][list_id][':card_type'] = card_type;
+                        report_metadata[':lists'][list_id][':board_id'] = board_id
+                        report_metadata[':boards'][board_id][':lists'].append(list_id)
 
     def list_boards(self):
         syseng_boards = self.client.list_boards()
@@ -77,32 +79,58 @@ class TrelloCollector(object):
                 self.logger.debug('board name: %s is here, board ID is: %s; list %s is here, list ID is: %s' % (board.name, board.id, tlist.name, tlist.id)) 
 
     def parse_trello(self, deep_scan):
-        """Main function to parse all Trello boards and lists.
-        If deep_scan is True the scan will traverse each card, otherwise just a light scan(much faster)"""
+        """
+        :deep_scan: If deep_scan is True the scan will traverse actions, otherwise just a light scan(much faster)
+        Main function to parse all Trello boards and lists.
+        """
         trello_sources = self.content[':output_metadata'][':trello_sources'];
         self.logger.debug('The sources are %s' % (trello_sources))
 
-        self._parse_sources(self.content[':output_metadata'][':trello_sources'][':assignments'], "assignment", deep_scan)
-        self._parse_sources(self.content[':output_metadata'][':trello_sources'][':epics'], "epic", deep_scan)
-        self._parse_sources(self.content[':output_metadata'][':trello_sources'][':projects'], "project", deep_scan)
-        return self.content
-
-    def _parse_sources(self, trello_sources, card_type, deep_scan):
-        """Helper function to scan either assignments or epics defined in the config
-        If deep_scan is True the scan will traverse each card, otherwise just a light scan(much faster).
-        trello_sources: dict that contains configuration and output structure
-        card_type: whether we'll be parsing epics or assignments"""
-        for board_t in trello_sources.keys():
-            tr_board = self.client.get_board(board_t);
-            tr_board.fetch();
+        for board_id in trello_sources[':boards'].keys():
+            tr_board = self.client.get_board(board_id);
+            tr_board.fetch(); # get all board properties
             members = [ (m.id, m.full_name.decode('utf-8')) for m in tr_board.get_members()];
-            self.logger.debug('considering board %s, and members %s' % (trello_sources[board_t][':board_name'], members))
+            trello_sources[':boards'][board_id][':members'] = members;
+            self.logger.debug('----- querying board %s -----' % (trello_sources[':boards'][board_id][':board_name']))
+            self.logger.debug('Board members are %s' % (trello_sources[':boards'][board_id][':members']))
 
-            #parse all the regular lists from :lists section of config
-            for list_t in trello_sources[board_t][':lists'].keys():
-                self._parse_list(trello_sources[board_t][':lists'][list_t], tr_board, members, deep_scan)
+            #trello_sources[board_id][':cards'] = []
+            cards = tr_board.get_cards();
+
+    
+            for card in cards:
+                card_content = {}
+                card_content[':name'] = card.name.decode("utf-8")
+                card_content[':id'] = card.id
+                card_content[':members'] = []
+                card_content[':board_id'] = tr_board.id
+                for member_id in card.member_ids:
+                    for (m_id, m_full_name) in members:
+                        if member_id == m_id :
+                           card_content[':members'].append((m_id,m_full_name))
+                card_content[':desc'] = card.desc
+                card_content[':short_url'] = card.url
+                card_content[':labels'] = [label.name.decode("utf-8") for label in card.labels]
+                card_content[':board_name'] = tr_board.name
+                card_content[':list_id'] = card.list_id
+                card_content[':due_date'] = card.due
+                trello_sources[':cards'].append(card_content);
+
+            self.logger.debug('%s cards were collected' % (len(cards)))
+
+            tr_board.fetch_actions(action_filter="commentCard,updateCard:idList,createCard,copyCard,moveCardToBoard,convertToCardFromCheckItem",action_limit=1000);
+            trello_sources[':boards'][board_id][':actions'] = sorted(tr_board.actions,key=lambda act: act['date'], reverse=True)
+            self.logger.debug('%s actions were collected' % (len(trello_sources[':boards'][board_id][':actions'])))
+            self.logger.debug('Oldest action is %s' % (trello_sources[':boards'][board_id][':actions'][-1]))
+
+            tr_lists = tr_board.all_lists()
+            for tr_list in tr_lists:
+                if tr_list.id in trello_sources[':lists']:
+                    trello_sources[':lists'][tr_list.id][':name'] = tr_list.name.decode("utf-8");
+            self.logger.debug('the lists are %s' % (tr_lists))
 
         return self.content
+
 
     def _parse_list(self, list_config, tr_board, members, deep_scan):
         """Parse individual lists.

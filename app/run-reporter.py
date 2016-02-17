@@ -71,6 +71,7 @@ def main():
 
     # Transform the Data
     transformer = data_transformer.DataTransformer(report_config, unprocessed_report, True)
+
     transformer.repopulate_report()
 
     #Write data to Google SpreadSheets
