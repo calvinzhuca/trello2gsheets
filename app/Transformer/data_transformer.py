@@ -195,9 +195,9 @@ class DataTransformer(object):
         self.source_report[':collected_content'] = {}
 
         tr_lists = self.source_report[':output_metadata'][':trello_sources'][':lists']
-        self.logger.debug('The lists are %s' % (tr_lists))
+        #self.logger.debug('The lists are %s' % (tr_lists))
         for card in self.source_report[':output_metadata'][':trello_sources'][':cards']:
-            self.logger.debug('adding list data to the card %s' % (card))
+            #self.logger.debug('adding list data to the card %s' % (card))
             list_id = card[':list_id']
             if not list_id in tr_lists: #list is not included in the reports
                 continue;
