@@ -8,6 +8,7 @@ import logging
 
 import httplib2
 import datetime
+import arrow
 
 from . import card_details
 
@@ -113,7 +114,7 @@ class TrelloCollector(object):
                 card_content[':labels'] = [label.name.decode("utf-8") for label in card.labels]
                 card_content[':board_name'] = tr_board.name
                 card_content[':list_id'] = card.list_id
-                card_content[':due_date'] = card.due
+                card_content[':due_date'] = arrow.get(card.due).format('YYYY-MM-DD HH:mm:ss')
                 trello_sources[':cards'].append(card_content);
 
             self.logger.debug('%s cards were collected' % (len(cards)))

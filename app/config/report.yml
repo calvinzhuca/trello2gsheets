@@ -47,7 +47,7 @@
       :board_id: "5640b810860935a27a6139d6"
       :list_id: "5640bb2c9826d99d92fbfd7b"
 :output_metadata:
-  :template_id: "1pxdjjYLIny9dlkUW7ghhKyNesP1WAML5DfxSVyugq9E" #Google spreadsheet template to use for the report
+  :template_id: "1Sk_Xa7vkUJPMKF_T1yGfwdSLLcjolyepG-q_ws3xcRE" #Google spreadsheet template to use for the report
   :report_name: "SysEng Assignments Report "
   :columns:
     1:
@@ -70,7 +70,7 @@
       :key: ":status"
     7:
       :name: "Last Updated"
-      :key: ":last_updated"
+      :key: ":comment_date"
     8:
       :name: "Detailed Status"
       :key: ":detailed_status"
