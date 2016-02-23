@@ -53,6 +53,7 @@ class DataTransformer(object):
         # 2. Per card actions. before continueing apply epics, labels, tags as they exist per individual card
         for card in source.keys():
             self.apply_actions(source[card]);
+            self.apply_status_comments(source[card]);
             self.apply_labels(source[card]);
             self.apply_tags(source[card]);
             self.add_for_board(source[card]);
@@ -211,18 +212,6 @@ class DataTransformer(object):
         :card: card to which to apply the actions
         The actions are added to this card: latest_move, latest comment(detailed_status), completed_date
         """
-        unsorted_comments = []
-        for comment in self.source_report[':output_metadata'][':trello_sources'][':boards'][card[':board_id']][':actions']:
-            if comment['data']['card']['id'] == card[':id'] and comment['type'] == 'commentCard':
-                unsorted_comments.append((comment['data']['text'], arrow.get(comment['date']).format('YYYY-MM-DD HH:mm:ss')))
-        #self.logger.debug('For card %s, the comments are %s' % (card,unsorted_comments))
-        if len(unsorted_comments) > 0:
-            comments = sorted(unsorted_comments, key=lambda x: x[-1], reverse=True)
-            #self.logger.debug("The last comment is '{0}'".format(comments[0]))
-            card[':detailed_status'] = comments[0][0]
-            card[':comment_date'] = comments[0][1]
-
-
         unsorted_actions = []
         for action in self.source_report[':output_metadata'][':trello_sources'][':boards'][card[':board_id']][':actions']:
             if action['data']['card']['id'] == card[':id'] and action['type'] in ['createCard', 'updateCard', 'copyCard', 'moveCardToBoard', 'convertToCardFromCheckItem']:
@@ -232,3 +221,22 @@ class DataTransformer(object):
             actions = sorted(unsorted_actions, reverse=True)
             #self.logger.debug("The last action is '{0}'".format(actions[0]))
             card[':latest_move'] = actions[0]
+
+    def apply_status_comments(self, card):
+        """
+        :card: card to which to add status comments
+        The status comments are added to this card: status_comment, status_comment_date
+        Status comments are the comments that contain [status] tag in them, we only need the last one of those.
+        """
+        unsorted_comments = []
+        for comment in self.source_report[':output_metadata'][':trello_sources'][':boards'][card[':board_id']][':actions']:
+            if comment['data']['card']['id'] == card[':id'] and comment['type'] == 'commentCard':
+                if '[status]' in comment['data']['text'].lower():
+                    unsorted_comments.append((comment['data']['text'], arrow.get(comment['date']).format('YYYY-MM-DD HH:mm:ss')))
+        #self.logger.debug('For card %s, the comments are %s' % (card,unsorted_comments))
+        if len(unsorted_comments) > 0:
+            comments = sorted(unsorted_comments, key=lambda x: x[-1], reverse=True)
+            #self.logger.debug("The last comment is '{0}'".format(comments[0]))
+            card[':status_comment'] = comments[0][0]
+            card[':status_comment_date'] = comments[0][1]
+
