@@ -1,4 +1,4 @@
-py-trello
+git+https://github.com/t0ffel/py-trello#egg=py-trello
 google-api-python-client
 gspread
 pyyaml
