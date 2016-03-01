@@ -17,7 +17,7 @@ class GSpreadSheetExporter(object):
     Class representing writing reporting data to google sheets via gspread.
     """
 
-    def __init__(self, report_config):
+    def __init__(self, report_config, _secrets_dir):
         self.logger = logging.getLogger("sysengreporting")
 
         self.gSCOPES = "https://www.googleapis.com/auth/drive " + "https://spreadsheets.google.com/feeds/"
@@ -28,6 +28,7 @@ class GSpreadSheetExporter(object):
         self.template_id = report_config[':output_metadata'][':template_id'];
         self.report_prefix = report_config[':output_metadata'][':report_name']
 
+        self.secrets_dir = _secrets_dir
         self.credentials = self.g_authenticate();
         self.gc = gspread.authorize(self.credentials)
 
@@ -106,8 +107,7 @@ class GSpreadSheetExporter(object):
         csv_file.close();
 
     def g_authenticate(self):
-        home_dir = os.path.expanduser('~')
-        credential_dir = os.path.join(home_dir, '.credentials')
+        credential_dir = self.secrets_dir
         if not os.path.exists(credential_dir):
             os.makedirs(credential_dir)
         credential_path = os.path.join(credential_dir,

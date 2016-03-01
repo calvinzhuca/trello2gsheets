@@ -42,7 +42,7 @@ def main():
         logger.error('Invalid configuration file!')
         return;
 
-    with open("config/trello_secret.yml", 'r') as stream:
+    with open("secrets/trello_secret.yml", 'r') as stream:
         trello_secret_config = yaml.load(stream)
 
 
@@ -75,7 +75,7 @@ def main():
     transformer.repopulate_report()
 
     #Write data to Google SpreadSheets
-    exporter = gspreadsheet_exporter.GSpreadSheetExporter(report_config);
+    exporter = gspreadsheet_exporter.GSpreadSheetExporter(report_config, "secrets/");
     exporter.write_spreadsheet(transformer.dest_report)
     #logger.debug('Report %s' % (transformer.dest_report))
 
