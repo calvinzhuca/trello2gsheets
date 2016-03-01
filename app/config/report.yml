@@ -47,7 +47,7 @@
       :board_id: "5640b810860935a27a6139d6"
       :list_id: "5640bb2c9826d99d92fbfd7b"
 :output_metadata:
-  :template_id: "1MZArCIsOCVt6srMkXiyiIrFZTvPuvcbOqNVGgO9Cm9Y" #Google spreadsheet template to use for the report
+  :template_id: "1EZ4Y6UkMgCQ11KKoaOrZ9fM30NWYTIMOhOOINILxtXc" #Google spreadsheet template to use for the report
   :report_name: "SysEng Assignments Report "
   :columns:
     1:
