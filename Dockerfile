@@ -2,7 +2,6 @@ FROM fedora:23
 
 RUN dnf update -y && dnf clean all
 
-# Install specific libs requires for Python to build
 RUN dnf install -y python3 \
                    python3-pip \
                    git
