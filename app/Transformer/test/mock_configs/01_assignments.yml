@@ -1,0 +1,59 @@
+:output_metadata:
+  :gen_date: 2016-03-08 17:57
+  :trello_sources:
+    :boards:
+      565f5bb27fec4f69a51d1657:
+        :actions:
+        - data:
+            board:
+              id: 565f5bb27fec4f69a51d1657
+              name: New Assignment Structure
+              shortLink: 6qC19Vz0
+            card:
+              id: 565f5d2b795d82c7539f9c59
+              idShort: 17
+              name: no project-completed
+              shortLink: uwH1cUbg
+            list:
+              id: 565f5bdb393ac487c85ca04e
+              name: Completed
+          date: '2016-02-04T21:55:01.836Z'
+          id: 56b3c8b53cb8316504de49c7
+          idMemberCreator: 5627c365edf6b78399c9e316
+          memberCreator:
+            avatarHash: null
+            fullName: Test ISer
+            id: 5627c365edf6b78399c9e31
+            initials: AS
+            username: test_user1
+          type: createCard
+        :board_id: 565f5bb27fec4f69a51d1657
+        :board_name: new_assignment_structure
+        :lists:
+        - 565f5bc10c798300a5d4fe7e
+        :members:
+        - !!python/tuple
+          - 5627c365edf6b78399c9e31
+          - Test User
+    :cards:
+    - :board_id: 565f5bb27fec4f69a51d1657
+      :board_name: New Assignment Structure
+      :desc: "**Owner/Responsible**\n\n**Abstract**\nThis Reference Architecture\" [firsttag]"
+      :due_date: '2016-03-08 17:57:35'
+      :id: 565f5d2b795d82c7539f9c59
+      :labels:
+      - Ok
+      :list_id: 565f5bc10c798300a5d4fe7e
+      :members: 
+        - !!python/tuple
+          - 5627c365edf6b78399c9e31
+          - Test User
+      :name: This is a testing board
+      :short_url: https://trello.com/c/orLySrK1/3-this-is-a-testing-board
+    :lists:
+      565f5bc10c798300a5d4fe7e:
+        :board_id: 565f5bb27fec4f69a51d1657
+        :card_type: :assignments
+        :completed: false
+        :list_id: 565f5bc10c798300a5d4fe7e
+        :name: Not Completed
