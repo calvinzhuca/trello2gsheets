@@ -232,11 +232,12 @@ class DataTransformer(object):
         for comment in self.source_report[':output_metadata'][':trello_sources'][':boards'][card[':board_id']][':actions']:
             if comment['data']['card']['id'] == card[':id'] and comment['type'] == 'commentCard':
                 if '[status]' in comment['data']['text'].lower():
-                    unsorted_comments.append((comment['data']['text'], arrow.get(comment['date']).format('YYYY-MM-DD HH:mm:ss')))
+                    unsorted_comments.append((comment['data']['text'], arrow.get(comment['date']).format('YYYY-MM-DD HH:mm:ss'),comment['idMemberCreator']))
         #self.logger.debug('For card %s, the comments are %s' % (card,unsorted_comments))
         if len(unsorted_comments) > 0:
             comments = sorted(unsorted_comments, key=lambda x: x[-1], reverse=True)
             #self.logger.debug("The last comment is '{0}'".format(comments[0]))
             card[':status_comment'] = comments[0][0]
             card[':status_comment_date'] = comments[0][1]
+            card[':status_by'] = comments[0][2]
 
