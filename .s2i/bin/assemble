@@ -1,0 +1,15 @@
+#!/bin/bash -e
+
+echo "---> (custom) Copying application source ..."
+cp -Rf /tmp/src/. ./
+
+echo "---> (custom) Installing dependencies ..."
+pip install --user -r requirements.txt
+
+# Fix source directory permissions
+fix-permissions ./
+# set permissions for any installed artifacts
+fix-permissions /opt/app-root
+
+# remove pip temporary directory
+rm -rf /tmp/pip_build_default
