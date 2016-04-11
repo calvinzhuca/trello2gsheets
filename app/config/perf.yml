@@ -1,0 +1,93 @@
+# Report structure
+:trello_sources:
+  :assignments:
+    board_perf:
+      :board_id: "5702c44aab46637bd8005ff2"
+      :lists: 
+        in_progress: "5702c4d949eb07d434c01faa"
+        unsorted_backlog: "5702c451c13afc5dd54c2b89"
+        approved_backlog: "5702c458ec8261a06e881c2d"
+        investigation: "5702c526abbbbc1b317ee4ca"
+      :done_lists:
+        completed: "5702c4da3349d87a3a19c9c4"
+:transform:
+  :tags:
+    funding_buckets:
+      :tag_prefix: "fb_"
+      :pretty_name: "Funding Bucket"
+    project:
+      :tag_prefix: "project_"
+      :pretty_name: "Project"
+    sponsor:
+      :tag_prefix: "sponsor_"
+      :pretty_name: "Sponsor"
+    epic:
+      :tag_prefix: "epic_"
+      :pretty_name: "Epic tag"
+:output_metadata:
+  :template_id: "1AV4y2kACejOYeFe36du2un58ro45lmPmX7n3N5MQy-s" #Google spreadsheet template to use for the report
+  :report_name: "Perf Assignments Report "
+  :columns:
+    1:
+      :name: "Assignment ID"
+      :key: ":id"
+    2:
+      :name: "Assignment"
+      :key: ":name"
+    3:
+      :name: "Owner"
+      :key: ":members"
+    4:
+      :name: "Project"
+      :key: ":project"
+    5:
+      :name: "Status Updated by"
+      :key: ":status_by"
+    6:
+      :name: "Status"
+      :key: ":status"
+    7:
+      :name: "Last Updated"
+      :key: ":status_comment_date"
+    8:
+      :name: "Detailed Status"
+      :key: ":status_comment"
+    9:
+      :name: "Tags"
+      :key: ":tags"
+    10:
+      :name: "Short URL"
+      :key: ":short_url"
+    11:
+      :name: "Board"
+      :key: ":board_name"
+    12:
+      :name: "List"
+      :key: ":list_name"
+    13:
+      :name: "Type"
+      :key: ":card_type"
+    14:
+      :name: "Last Moved"
+      :key: ":latest_move"
+    15:
+      :name: "Due Date"
+      :key: ":due_date"
+    16:
+      :name: "Epic tag"
+      :key: ":epic"
+    17:
+      :name: "Labels"
+      :key: ":labels"
+    18:
+      :name: "Epic"
+      :key: ":epic_friendly"
+    19:
+      :name: "User ID"
+      :key: ":user_id"
+    20:
+      :name: "Sponsor"
+      :key: ":sponsor"
+    21:
+      :name: "Completed Date"
+      :key: ":completed_date"
