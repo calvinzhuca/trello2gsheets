@@ -47,7 +47,7 @@
       :board_id: "5640b810860935a27a6139d6"
       :list_id: "5640bb2c9826d99d92fbfd7b"
 :output_metadata:
-  :template_id: "1AV4y2kACejOYeFe36du2un58ro45lmPmX7n3N5MQy-s" #Google spreadsheet template to use for the report
+  :template_id: "1qHhoBWlYc2bOIJlMOhGIiZN2X9UwDURYJjtUY52b_pw" #Google spreadsheet template to use for the report
   :report_name: "SysEng Assignments Report "
   :columns:
     1:
@@ -113,3 +113,6 @@
     21:
       :name: "Completed Date"
       :key: ":completed_date"
+    22:
+      :name: "Status Color"
+      :key: ":status_color"

@@ -92,7 +92,7 @@ class TrelloCollector(object):
             members = [ (m.id, m.full_name.decode('utf-8')) for m in tr_board.get_members()];
             trello_sources[':boards'][board_id][':members'] = members;
             self.logger.debug('----- querying board %s -----' % (trello_sources[':boards'][board_id][':board_name']))
-            self.logger.debug('Board members are %s' % (trello_sources[':boards'][board_id][':members']))
+            #self.logger.debug('Board members are %s' % (trello_sources[':boards'][board_id][':members']))
 
             #trello_sources[board_id][':cards'] = []
             cards = tr_board.get_cards();
@@ -110,7 +110,8 @@ class TrelloCollector(object):
                            card_content[':members'].append((m_id,m_full_name))
                 card_content[':desc'] = card.desc
                 card_content[':short_url'] = card.url
-                card_content[':labels'] = [label.name.decode("utf-8") for label in card.labels]
+                card_content[':labels'] = [(label.name.decode("utf-8"),label.color) for label in card.labels]
+                #self.logger.debug('Card: {0} | LABELES are {1}'.format(card_content[':name'], card_content[':labels']))
                 card_content[':board_name'] = tr_board.name
                 card_content[':list_id'] = card.list_id
                 card_content[':due_date'] = arrow.get(card.due).format('YYYY-MM-DD HH:mm:ss')
@@ -121,7 +122,7 @@ class TrelloCollector(object):
             tr_board.fetch_actions(action_filter="commentCard,updateCard:idList,createCard,copyCard,moveCardToBoard,convertToCardFromCheckItem",action_limit=1000);
             trello_sources[':boards'][board_id][':actions'] = sorted(tr_board.actions,key=lambda act: act['date'], reverse=True)
             self.logger.debug('%s actions were collected' % (len(trello_sources[':boards'][board_id][':actions'])))
-            self.logger.debug('Oldest action is %s' % (trello_sources[':boards'][board_id][':actions'][-1]))
+            #self.logger.debug('Oldest action is %s' % (trello_sources[':boards'][board_id][':actions'][-1]))
 
             tr_lists = tr_board.all_lists()
             for tr_list in tr_lists:

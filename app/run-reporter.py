@@ -68,6 +68,8 @@ def main():
 
 
     unprocessed_report = warehouse.parse_trello(args.deep_scan);
+    #with open('unprocessed_report.yml', 'w') as stream:
+    #    stream.write( yaml.dump(unprocessed_report, default_flow_style=False) )
 
     # Transform the Data
     transformer = data_transformer.DataTransformer(report_config, unprocessed_report, True)

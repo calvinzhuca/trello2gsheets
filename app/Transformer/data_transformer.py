@@ -119,16 +119,19 @@ class DataTransformer(object):
 
     def apply_labels(self, card):
         card[':status'] = 'n/a'
-        for label in card[':labels']:
-            if label == 'Ok':
-                card[':status'] = '3-Ok';
-                continue;
-            if label == 'Issues':
-                card[':status'] = '2-Issues';
-                continue;
-            if label == 'Blocked':
-                card[':status'] = '1-Blocked';
-                continue;
+        for (name, color) in card[':labels']:
+            if color == 'red':
+                card[':status'] = 'RD-' + name;
+                card[':status_color'] = color
+                return;
+        for (name, color) in card[':labels']:
+            if color == 'yellow':
+                card[':status'] = 'YL-' + name;
+                card[':status_color'] = color
+                return;
+            if color == 'green':
+                card[':status'] = 'GR-' + name;
+                card[':status_color'] = color
 
     def add_for_board(self, card):
         """controlled by :add_for_board key in the report.yml
@@ -235,7 +238,8 @@ class DataTransformer(object):
                     unsorted_comments.append((comment['data']['text'], arrow.get(comment['date']).format('YYYY-MM-DD HH:mm:ss'),comment['idMemberCreator']))
         #self.logger.debug('For card %s, the comments are %s' % (card,unsorted_comments))
         if len(unsorted_comments) > 0:
-            comments = sorted(unsorted_comments, key=lambda x: x[-1], reverse=True)
+            comments = sorted(unsorted_comments, key=lambda x: x[1], reverse=True) 
+            #self.logger.debug("The sorted comments are '{0}'".format(comments))
             #self.logger.debug("The last comment is '{0}'".format(comments[0]))
             card[':status_comment'] = comments[0][0]
             card[':status_comment_date'] = comments[0][1]
