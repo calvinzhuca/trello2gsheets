@@ -114,7 +114,8 @@ class TrelloCollector(object):
                 #self.logger.debug('Card: {0} | LABELES are {1}'.format(card_content[':name'], card_content[':labels']))
                 card_content[':board_name'] = tr_board.name
                 card_content[':list_id'] = card.list_id
-                card_content[':due_date'] = arrow.get(card.due).format('YYYY-MM-DD HH:mm:ss')
+                if card.due:
+                    card_content[':due_date'] = arrow.get(card.due).format('YYYY-MM-DD HH:mm:ss')
                 trello_sources[':cards'].append(card_content);
 
             self.logger.debug('%s cards were collected' % (len(cards)))
