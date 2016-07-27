@@ -1,0 +1,106 @@
+# Report structure
+:trello_sources:
+  :assignments:
+    board_e2e:
+      :board_id: "54d8fc1fc187b3c2c81767d5"
+      :lists: 
+        new: "54d8fc5d95184ed7ab07e785"
+        backlog: "54d8fcbe3ea9104dc8d70239"
+        backlog_34: "5784ffb24af0c5856ff42cb7"
+        next: "54d90611534fd3b8c80a52fa"
+        in_progress: "54d906177559e815ac40e531"
+      :done_lists:
+        completed: "54d9061c9d9fae8e3b950bf1"
+  :epics:
+    board_e2e:
+      :board_id: "54d8fc1fc187b3c2c81767d5"
+      :lists:
+        :features: "5773ef6ceabd5d3fa12ec10d"
+:transform:
+  :tags:
+    funding_buckets:
+      :tag_prefix: "fb_"
+      :pretty_name: "Funding Bucket"
+    project:
+      :tag_prefix: "project_"
+      :pretty_name: "Project"
+    sponsor:
+      :tag_prefix: "sponsor_"
+      :pretty_name: "Sponsor"
+    epic:
+      :tag_prefix: "epic-"
+      :pretty_name: "Epic tag"
+  :sprint_list: #The list used for sprints. Sprint properties are taken from the card in this list named 'Sprint XXX'
+    board_e2e:
+      :board_id: "54d8fc1fc187b3c2c81767d5"
+      :list_id: "54d906177559e815ac40e531"
+:output_metadata:
+  :template_id: "1e8ju204-Ro5jy6lOVC-jSgN-IWGd0CVPSfyeb1j5JMU" #Google spreadsheet template to use for the report
+  :report_name: "Common Logging Assignments Report "
+  :columns:
+    1:
+      :name: "Assignment ID"
+      :key: ":id"
+    2:
+      :name: "Assignment"
+      :key: ":name"
+    3:
+      :name: "Owner"
+      :key: ":members"
+    4:
+      :name: "Project"
+      :key: ":project"
+    5:
+      :name: "Status Updated by"
+      :key: ":status_by"
+    6:
+      :name: "Status"
+      :key: ":status"
+    7:
+      :name: "Last Updated"
+      :key: ":status_comment_date"
+    8:
+      :name: "Detailed Status"
+      :key: ":status_comment"
+    9:
+      :name: "Tags"
+      :key: ":tags"
+    10:
+      :name: "Short URL"
+      :key: ":short_url"
+    11:
+      :name: "Board"
+      :key: ":board_name"
+    12:
+      :name: "List"
+      :key: ":list_name"
+    13:
+      :name: "Type"
+      :key: ":card_type"
+    14:
+      :name: "Last Moved"
+      :key: ":latest_move"
+    15:
+      :name: "Due Date"
+      :key: ":due_date"
+    16:
+      :name: "Epic tag"
+      :key: ":epic"
+    17:
+      :name: "Labels"
+      :key: ":labels"
+    18:
+      :name: "Epic"
+      :key: ":epic_friendly"
+    19:
+      :name: "User ID"
+      :key: ":user_id"
+    20:
+      :name: "Sponsor"
+      :key: ":sponsor"
+    21:
+      :name: "Completed Date"
+      :key: ":completed_date"
+    22:
+      :name: "Status Color"
+      :key: ":status_color"
