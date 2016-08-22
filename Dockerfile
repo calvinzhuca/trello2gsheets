@@ -1,8 +1,8 @@
-FROM fedora:23
+FROM centos/python-34-centos7:latest
 
-RUN dnf update -y && dnf clean all
+RUN yum update -y && yum clean all
 
-RUN dnf install -y python3 \
+RUN yum install -y python3 \
                    python3-pip \
                    git
 
