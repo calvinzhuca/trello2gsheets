@@ -19,7 +19,7 @@ class DataTransformer(object):
         :param _report_config: report configuration(particularly the tag information
         :param _source_report: unprocessed report
         """
-        self.logger = logging.getLogger("sysengreporting")
+        self.logger = logging.getLogger(__name__)
 
         self.report_config = _report_config
         self.source_report = _source_report

@@ -17,7 +17,7 @@ class TrelloCollector(object):
     """
 
     def __init__(self, report_config, trello_secret):
-        self.logger = logging.getLogger("sysengreporting")
+        self.logger = logging.getLogger(__name__)
         self.client = TrelloClient(api_key = trello_secret[':consumer_key'],
                                    api_secret = trello_secret[':consumer_secret'],
                                    token = trello_secret[':oauth_token'],
@@ -76,7 +76,7 @@ class TrelloCollector(object):
         syseng_boards = self.client.list_boards()
         for board in syseng_boards:
             for tlist in board.all_lists():
-                self.logger.debug('board name: %s is here, board ID is: %s; list %s is here, list ID is: %s' % (board.name, board.id, tlist.name, tlist.id)) 
+                self.logger.info('board name: %s is here, board ID is: %s; list %s is here, list ID is: %s' % (board.name, board.id, tlist.name, tlist.id)) 
 
     def parse_trello(self, deep_scan):
         """
@@ -89,10 +89,10 @@ class TrelloCollector(object):
         for board_id in trello_sources[':boards'].keys():
             tr_board = self.client.get_board(board_id);
             tr_board.fetch(); # get all board properties
-            members = [ (m.id, m.full_name.decode('utf-8')) for m in tr_board.get_members()];
+            members = [ (m.id, m.full_name) for m in tr_board.get_members()];
             trello_sources[':boards'][board_id][':members'] = members;
-            self.logger.debug('----- querying board %s -----' % (trello_sources[':boards'][board_id][':board_name']))
-            #self.logger.debug('Board members are %s' % (trello_sources[':boards'][board_id][':members']))
+            self.logger.info('----- querying board %s -----' % (trello_sources[':boards'][board_id][':board_name']))
+            self.logger.debug('Board members are %s' % (trello_sources[':boards'][board_id][':members']))
 
             #trello_sources[board_id][':cards'] = []
             cards = tr_board.get_cards();
@@ -100,7 +100,7 @@ class TrelloCollector(object):
     
             for card in cards:
                 card_content = {}
-                card_content[':name'] = card.name.decode("utf-8")
+                card_content[':name'] = card.name
                 card_content[':id'] = card.id
                 card_content[':members'] = []
                 card_content[':board_id'] = tr_board.id
@@ -110,7 +110,7 @@ class TrelloCollector(object):
                            card_content[':members'].append((m_id,m_full_name))
                 card_content[':desc'] = card.desc
                 card_content[':short_url'] = card.url
-                card_content[':labels'] = [(label.name.decode("utf-8"),label.color) for label in card.labels]
+                card_content[':labels'] = [(label.name,label.color) for label in card.labels]
                 #self.logger.debug('Card: {0} | LABELES are {1}'.format(card_content[':name'], card_content[':labels']))
                 card_content[':board_name'] = tr_board.name
                 card_content[':list_id'] = card.list_id
@@ -128,8 +128,8 @@ class TrelloCollector(object):
             tr_lists = tr_board.all_lists()
             for tr_list in tr_lists:
                 if tr_list.id in trello_sources[':lists']:
-                    trello_sources[':lists'][tr_list.id][':name'] = tr_list.name.decode("utf-8");
-            self.logger.debug('the lists are %s' % (tr_lists))
+                    trello_sources[':lists'][tr_list.id][':name'] = tr_list.name;
+            self.logger.info('the lists are %s' % (tr_lists))
 
         return self.content
 

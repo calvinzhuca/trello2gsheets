@@ -19,7 +19,7 @@ class TrelloUpdater(object):
     """
 
     def __init__(self, processed_report, trello_secret):
-        self.logger = logging.getLogger("sysengreporting")
+        self.logger = logging.getLogger(__name__)
         self.client = TrelloClient(api_key = trello_secret[':consumer_key'],
                                    api_secret = trello_secret[':consumer_secret'],
                                    token = trello_secret[':oauth_token'],

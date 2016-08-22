@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
-from TrelloCollector import trello_collector
-from GSpreadSheetExporter import gspreadsheet_exporter
-from Transformer import data_transformer
-from UpdateTrello import trello_updater
+from trello2gsheets.trello_collector import TrelloCollector
+from trello2gsheets.gspreadsheet_exporter import GSpreadSheetExporter
+from trello2gsheets.data_transformer import DataTransformer
+from trello2gsheets.trello_updater import TrelloUpdater
 
 import logging
 import tempfile
@@ -15,16 +15,12 @@ import httplib2
 from apiclient import discovery
 
 def main():
-    logger = logging.getLogger("sysengreporting")
-    logger.setLevel(logging.DEBUG)
+    logging_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    logging.basicConfig(format=logging_format,
+                        level=logging.INFO)
 
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    logger = logging.getLogger(__name__)
 
-    _stdlog = logging.StreamHandler()
-    _stdlog.setLevel(logging.DEBUG)
-    _stdlog.setFormatter(formatter)
-
-    logger.addHandler(_stdlog)
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', help='report config', default="config/report.yml")
@@ -45,9 +41,9 @@ def main():
     with open("secrets/trello_secret.yml", 'r') as stream:
         trello_secret_config = yaml.load(stream)
 
-
-    warehouse = trello_collector.TrelloCollector(report_config, trello_secret_config)
-    logger.info('Welcome to the Warehouse!')
+    warehouse = TrelloCollector(report_config, trello_secret_config)
+    logger.info('Started querying of Trello {}'.format(warehouse))
+    print('in init')
 
     if args.action == 'list':
         warehouse.list_boards(); #output list of Trello boards and lists 
@@ -56,7 +52,7 @@ def main():
         unprocessed_report = warehouse.parse_trello(False);
 
         # Transform the Data
-        transformer = data_transformer.DataTransformer(report_config, unprocessed_report, False)
+        transformer = DataTransformer(report_config, unprocessed_report, False)
         transformer.repopulate_report()
         updater = trello_updater.TrelloUpdater(transformer.dest_report, trello_secret_config)
         updater.update_projects()
@@ -72,12 +68,12 @@ def main():
     #    stream.write( yaml.dump(unprocessed_report, default_flow_style=False) )
 
     # Transform the Data
-    transformer = data_transformer.DataTransformer(report_config, unprocessed_report, True)
+    transformer = DataTransformer(report_config, unprocessed_report, True)
 
     transformer.repopulate_report()
 
     #Write data to Google SpreadSheets
-    exporter = gspreadsheet_exporter.GSpreadSheetExporter(report_config, "secrets/");
+    exporter = GSpreadSheetExporter(report_config, "secrets/");
     exporter.write_spreadsheet(transformer.dest_report)
     #logger.debug('Report %s' % (transformer.dest_report))
 

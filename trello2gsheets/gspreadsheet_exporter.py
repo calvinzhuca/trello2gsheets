@@ -18,7 +18,7 @@ class GSpreadSheetExporter(object):
     """
 
     def __init__(self, report_config, _secrets_dir):
-        self.logger = logging.getLogger("sysengreporting")
+        self.logger = logging.getLogger(__name__)
 
         self.gSCOPES = "https://www.googleapis.com/auth/drive " + "https://spreadsheets.google.com/feeds/"
         self.gCLIENT_SECRET_FILE = os.path.join(os.path.dirname(__file__), '..', '..', 'config', 'client_secret.json')
@@ -39,8 +39,8 @@ class GSpreadSheetExporter(object):
     def write_spreadsheet(self, processed_report):
         report_name = self.report_prefix + processed_report[':output_metadata'][':gen_date']
         if not (self.copy_file(self.service, self.template_id, report_name)):
-            self.logger.debug('Unable to copy the template %s successfully!' % (self.report))
-        self.logger.debug('Copied the template %s successfully!' % (self.template_id))
+            self.logger.error('Unable to copy the template %s successfully!' % (self.report))
+        self.logger.info('Copied the template %s successfully!' % (self.template_id))
         self.report = self.gc.open(report_name)
         self.wks_granular = self.report.worksheet('Trello Data')
 
@@ -121,7 +121,7 @@ class GSpreadSheetExporter(object):
             flags = tools.argparser.parse_args(args=["--noauth_local_webserver"])
             credentials = tools.run_flow(flow, store, flags)
             print('Storing credentials to ' + credential_path)
-        self.logger.debug("Authenticated to Google Drive!")
+        self.logger.info("Authenticated to Google Drive!")
         return credentials
 
     def insert_file(self, service, title, description, mime_type, filename):
