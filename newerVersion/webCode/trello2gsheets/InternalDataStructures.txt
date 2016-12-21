@@ -1,0 +1,140 @@
+Data structure on the output of the TrelloCollector
+
+:output_metadata:
+  :report_name: "Name"
+  :trello_sources:
+    :assignments:
+      board1:
+        :board_id: "ID"
+        :board_name: "name"
+        :lists:
+          list1:
+            :list_id: "ID"
+            :list_name: "name"
+          list2:
+            :list_id: "ID2"
+            :list_name: "listname2"
+    :epics:
+      board2:
+        :board_id: "ID"
+        :board_name: "name"
+        :lists:
+          list3:
+            :list_id: "id"
+            :list_name: "name"
+  :collection_datetime: "datetime"
+:collected_content:
+  ID1:
+    :name: "name"
+    :id: "trello_id"
+    :members: [("Memebers", user_id), ("member2", user_id2)]
+    :last_updated: ""
+    :detailed_status: ""
+    :short_url: ""
+    :board_name: ""
+    :list_name: ""
+    :last_move: ""
+    :due_date: ""
+    :labels: ["l1", "l2"]
+    :desc: ""
+    :card_type: "assignment|project|epic"
+    :list_id: ""
+  ID2:
+    :name:
+    ...
+
+**************************
+output of Transformer:
+
+:output_metadata:
+  :report_name: "Name"
+  :trello_sources:
+    board1:
+      :board_id: "ID"
+      :board_name: "name"
+      :lists:
+        list1:
+          :list_id: "ID"
+          :list_name: "name"
+          :completed: False
+          :card_type: "epic|assignment"
+        list2:
+          :list_id: "ID2"
+          :list_name: "listname2"
+      :epics:
+        list3:
+          :list_id: "id"
+          :list_name: "name"
+  :collection_datetime: "datetime"
+:collected_content:
+  :assignments:
+    ID1:
+      :name: "name" (nothing to do)
+      :id: "trello_id" (nothing to do)
+      :members: "member"
+      :last_updated: "" (nothing to do)
+      :detailed_status: "" (nothing to do)
+      :short_url: "" (nothing to do)
+      :board_name: "" (nothing to do)
+      :list_name: "" (nothing to do)
+      :last_move: "" (nothing to do)
+      :due_date: "" (nothing to do)
+      :labels: ["l1", "l2"]
+      :desc: "" (nothing to do)
+      :card_type: "assignment|project|epic" (nothing to do)
+      :project: "project name"
+      :funding_buckets: "funding buckets"
+      :status: "status"
+      :tags: ""
+      :team: ""
+      :type: ""
+      :completed_date: "date"
+      :completed: True|False
+    ID2:
+      :name:
+      ...
+  :epics:
+    ID1:
+      :name: "name" (nothing to do)
+      :id: "trello_id" (nothing to do)
+      :members: "member"
+      :last_updated: "" (nothing to do)
+      :detailed_status: "" (nothing to do)
+      :short_url: "" (nothing to do)
+      :board_name: "" (nothing to do)
+      :list_name: "" (nothing to do)
+      :last_move: "" (nothing to do)
+      :due_date: "" (nothing to do)
+      :labels: ["l1", "l2"]
+      :desc: "" (nothing to do)
+      :card_type: "assignment|project|epic" (nothing to do)
+      :project: "project name"
+      :funding_buckets: "funding buckets"
+      :status: "status"
+      :tags: ""
+      :team: ""
+      :type: ""
+      :children: ["ID1","ID2",..]
+  :projects:
+    ID9:
+      :name: "name" (nothing to do)
+      :id: "trello_id" (nothing to do)
+      :members: "member"
+      :last_updated: "" (nothing to do)
+      :detailed_status: "" (nothing to do)
+      :short_url: "" (nothing to do)
+      :board_name: "" (nothing to do)
+      :list_name: "" (nothing to do)
+      :last_move: "" (nothing to do)
+      :due_date: "" (nothing to do)
+      :labels: ["l1", "l2"]
+      :desc: "" (nothing to do)
+      :card_type: "assignment|project|epic" (nothing to do)
+      :project: "project name"
+      :funding_buckets: "funding buckets"
+      :status: "status"
+      :tags: ""
+      :team: ""
+      :type: ""
+      :children: ["ID1","ID2",..]
+

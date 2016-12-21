@@ -1,0 +1,34 @@
+# Report structure
+:trello_sources:
+  :assignments:
+    board_syseng:
+      :board_id: "55b8e03be0b7b68131139cf1"
+      :lists: 
+        in_progress: "55b8e064fb3f1d621db0746f"
+        unsorted_backlog: "55b8e05ebda5066e15c24025"
+        approved_backlog: "569ebdafc1fff35207ce2a86"
+        investigation: "55b8e83c1df82cf0bbd4edba"
+        internal: "569ebd9003675b8ce49862a9"
+        completed: "55b8e4428ec04b31597cd5c3"
+        unicorns: "569ebde429fc6b3d5e8495b9"
+      :done_lists:
+        completed: "55b8e4428ec04b31597cd5c3"
+  :projects:
+    project_sysdeseng:
+      :board_id: "562e7903530bf0e9c3101ba8"
+      :lists:
+        :investigate: "562e79bd371e4b35c08e257a"
+:transform:
+  :tags:
+    funding_buckets:
+      :tag_prefix: "fb_"
+      :pretty_name: "Funding Bucket"
+    project:
+      :tag_prefix: "project_"
+      :pretty_name: "Project"
+    sponsor:
+      :tag_prefix: "sponsor_"
+      :pretty_name: "Sponsor"
+    epic:
+      :tag_prefix: "epic_"
+      :pretty_name: "Epic tag"

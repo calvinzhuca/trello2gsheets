@@ -1,0 +1,109 @@
+# Report structure
+:trello_sources:
+  :assignments:
+    new_assignment_structure:
+      :board_id: "565f5bb27fec4f69a51d1657"
+      :lists:
+        internal: "565f5d59d8abfe6edb57ed93"
+        unicorns: "565f5bdef6fe5ebc955ad564"
+      :done_lists:
+        completed: "565f5bdb393ac487c85ca04e"
+  :epics:
+    new_assignment_structure:
+      :board_id: "565f5bb27fec4f69a51d1657"
+      :lists:
+        :features: "568ef266d7cb6237c9fa73cf"
+  :projects:
+    new_assignment_structure:
+      :board_id: "565f5bb27fec4f69a51d1657"
+      :lists:
+        :projects: "565f5bc6e3e4f310db567f0a"
+:transform:
+  :tags:
+    funding_buckets:
+      :tag_prefix: "fb_"
+      :pretty_name: "Funding Bucket"
+    project:
+      :tag_prefix: "project_"
+      :pretty_name: "Project"
+    sponsor:
+      :tag_prefix: "sponsor_"
+      :pretty_name: "Sponsor"
+    epic:
+      :tag_prefix: "epic_"
+      :pretty_name: "Epic tag"
+  :add_for_board: #map all board's items to specific project
+    AOS:
+      :project: "AOS"
+      :team: "ContainerILT"
+      :board_id: "5640b810860935a27a6139d6"
+:output_metadata:
+  :template_id: "19a1tqz9UN5paNDpoPGU_By81O7NbhitM5AQcdVE3oLw" #Google spreadsheet template to use for the report
+  :report_name: "Test Assignments Report "
+  :columns:
+    1:
+      :name: "Assignment ID"
+      :key: ":id"
+    2:
+      :name: "Assignment"
+      :key: ":name"
+    3:
+      :name: "Owner"
+      :key: ":members"
+    4:
+      :name: "Project"
+      :key: ":project"
+    5:
+      :name: "Funding Buckets"
+      :key: ":funding_buckets"
+    6:
+      :name: "Status"
+      :key: ":status"
+    7:
+      :name: "Last Updated"
+      :key: ":last_updated"
+    8:
+      :name: "Detailed Status"
+      :key: ":detailed_status"
+    9:
+      :name: "Tags"
+      :key: ":tags"
+    10:
+      :name: "Short URL"
+      :key: ":short_url"
+    11:
+      :name: "Board"
+      :key: ":board_name"
+    12:
+      :name: "List"
+      :key: ":list_name"
+    13:
+      :name: "Type"
+      :key: ":card_type"
+    14:
+      :name: "Last Moved"
+      :key: ":latest_move"
+    15:
+      :name: "Due Date"
+      :key: ":due_date"
+    16:
+      :name: "Epic Label"
+      :key: ":epic"
+    17:
+      :name: "Labels"
+      :key: ":labels"
+    18:
+      :name: "Epic"
+      :key: ":epic_friendly"
+    19:
+      :name: "User ID"
+      :key: ":user_id"
+    20:
+      :name: "Sponsor"
+      :key: ":sponsor"
+    21:
+      :name: "Completed date"
+      :key: ":completed_date"
+    22:
+      :name: "Children"
+      :key: ":children"
